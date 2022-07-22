@@ -1,0 +1,57 @@
+* {
+  margin: 0;
+  padding: 0;
+  font-family: "Mochiy Pop One", "ヒラギノ角ゴ Pro W3",
+    "Hiragino Kaku Gothic Pro", "メイリオ", "Meiryo", sans-serif;
+}
+
+html {
+  font-size: 100px;
+}
+
+body {
+  width: 100%;
+  font-size: 0.16rem;
+}
+
+.container {
+  background-color: #140d36;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.mode-select {
+  width: 70%;
+  margin: auto;
+}
+
+.next-page {
+  display: flex;
+  justify-content: space-between;
+  width: 2.8rem;
+  text-decoration: none;
+  font-size: 0.25rem;
+  color: #ffffff;
+  text-align: center;
+  background-color: #3d3a60;
+  padding: 0.15rem;
+  border-radius: 0.15rem;
+  margin: 0.2rem auto;
+}
+
+.arrow {
+  width: 0.15rem;
+  padding-right: 0.15rem;
+  fill: currentColor;
+}
+
+.next-page p {
+  padding-left: 0.2rem;
+}
+
+.next-page:hover {
+  background-color: #42426f;
+  color: #d7d9ff;
+}
