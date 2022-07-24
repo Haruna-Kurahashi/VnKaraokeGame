@@ -8,6 +8,8 @@ let currentNote = "";
 var musicGroup;
 var music = [];
 var toOnImage;
+var note_Img2, note_Img4, note_Img8, note_Img16;
+var note_Img2_sharp, note_Img4_sharp, note_Img8_sharp, note_Img16_sharp;
 var timeSprite;
 var startSp;
 var pitchSprite;
@@ -33,16 +35,20 @@ const staffHeight = 35;
 const melody = [
   [60, 1],
   [62, 1],
-  [64, 1],
-  [65, 1],
+  [64, 0.5],
+  [65, 0.25],
   [67, 1],
   [69, 1],
   [71, 1],
-  [72, 1],
+  [72, 2],
 ];
 
 function preload() {
-  toOnImage = loadImage("to-on.png");
+  //toOnImage = loadImage("./imgto-on.png");
+  note_Img2 = loadImage("./img/note2.svg");
+  note_Img4 = loadImage("./img/note4.svg");
+  note_Img8 = loadImage("./img/note8.svg");
+  note_Img16 = loadImage("./img/note16.svg");
 }
 
 function setup() {
@@ -111,7 +117,7 @@ function getPitching() {
       pitchSprite.position.x = timeSprite.position.x;
       comparisonPitch();
       pitchSprite.position.y = currentPitch2;
-      pitchSprite.shapeColor = color(119, 203, 185);
+      pitchSprite.shapeColor = color(255, 160, 0);
       pitchSprite.pitch = freq;
       pitchGroup.add(pitchSprite);
       timeSprite.overlap(musicGroup, scoring);
@@ -119,6 +125,7 @@ function getPitching() {
     getPitching();
   });
 }
+
 var score;
 let overlaped = [];
 //採点
@@ -218,16 +225,33 @@ function createMusic() {
 
     if (i == 0) {
       sprite.position.x = startPos;
-      startPosX.push(startPos - score[i].noteWidth / 2 + 1);
+      startPosX.push(startPos - score[i].noteWidth / 2);
     } else {
       sprite.position.x =
-        lastPosX + (score[i - 1].noteWidth / 2 + (score[i].noteWidth / 2 + 1));
+        lastPosX + (score[i - 1].noteWidth / 2 + score[i].noteWidth / 2);
       startPosX.push(lastPosX + score[i - 1].noteWidth / 2);
     }
     lastPosX = sprite.position.x;
     sprite.musicFreq = score[i].freq;
     sprite.musicNum = i;
     sprite.shapeColor = color(190, 233, 232);
+
+    switch (score[i].valueNote) {
+      case 0.25:
+        sprite.addImage(note_Img16);
+        break;
+      case 0.5:
+        sprite.addImage(note_Img8);
+        break;
+      case 1:
+        sprite.addImage(note_Img4);
+        break;
+      case 1.5:
+        break;
+      case 2:
+        sprite.addImage(note_Img2);
+        break;
+    }
     musicGroup.add(sprite);
   }
 }
