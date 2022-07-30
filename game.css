@@ -1,0 +1,109 @@
+* {
+  margin: 0;
+  padding: 0;
+  font-family: "Mochiy Pop One", "ヒラギノ角ゴ Pro W3",
+    "Hiragino Kaku Gothic Pro", "メイリオ", "Meiryo", sans-serif;
+}
+
+html {
+  font-size: 100px;
+}
+
+body {
+  width: 100%;
+  font-size: 0.16rem;
+  background-color: #140d36;
+}
+
+canvas {
+  display: block;
+}
+
+nav {
+  display: flex;
+  flex-direction: row-reverse;
+  margin-bottom: 8vh;
+}
+
+.home-link {
+  height: 0.3rem;
+  display: inline-block;
+  background-color: #3d3a60;
+  padding: 0.15rem;
+  border-radius: 0.12rem;
+  margin: 0.2rem 0.2rem 0 0;
+}
+
+.home-icon {
+  width: 0.35rem;
+  fill: #fff;
+}
+
+.home-link:hover {
+  background-color: #42426f;
+}
+
+.home-link:hover path {
+  fill: #d7d9ff;
+}
+
+.detection {
+  display: inline-block;
+}
+
+.game-ui {
+  float: right;
+}
+
+.point {
+  display: flex;
+  margin-right: 1rem;
+}
+
+.point p {
+  color: #ffa000;
+  /* text-shadow: -1px -1px 0 #ffe8bb, -1px 0 0 #ffe8bb, -1px 1px 0 #ffe8bb,
+    0 -1px 0 #ffe8bb, 0 1px 0 #ffe8bb, 1px -1px 0 #ffe8bb, 1px 0 0 #ffe8bb,
+    1px 1px 0 #ffe8bb; */
+  background: -webkit-linear-gradient(90deg, #ffa000, #febf46);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-size: 0.3rem;
+}
+
+#perfect {
+  color: #ffa000;
+  font-size: 0.3rem;
+}
+
+.button-ui {
+  margin-top: 0.3rem;
+  text-align: center;
+}
+
+button {
+  text-align: center;
+  cursor: pointer;
+  display: inline-block;
+  border-radius: 14px;
+  background: -webkit-linear-gradient(0deg, #ffd9eb, #fe92c9);
+  font-size: 0.25rem;
+  color: #fff;
+  padding: 0.05rem 0.05rem 0.05rem 0.05rem;
+  margin: auto;
+  border: none;
+}
+
+.button-child {
+  text-align: center;
+  background: -webkit-linear-gradient(-90deg, #ffd9eb, #fe92c9);
+  border-radius: 10px;
+  height: 0.45rem;
+  width: 2rem;
+  padding-top: 8px;
+}
+
+button:hover {
+  color: #fe92c9;
+  transform: translate3d(0, 3px, 0);
+}

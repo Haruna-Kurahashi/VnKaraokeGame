@@ -1,3 +1,4 @@
+var sketch;
 let pitch;
 let audioContext;
 let audioStream;
@@ -33,14 +34,14 @@ let startPosX = [];
 // const melody = [60, 62, 64, 65, 67, 69, 71, 72];
 const staffHeight = 35;
 const melody = [
-  [60, 1],
-  [62, 1],
-  [64, 0.5],
-  [65, 0.25],
-  [67, 1],
-  [69, 1],
-  [71, 1],
-  [72, 2],
+  [60, 2],
+  [62, 2],
+  [64, 2],
+  [65, 2],
+  [67, 2],
+  // [69, 1],
+  // [71, 1],
+  // [72, 2],
 ];
 
 function preload() {
@@ -126,37 +127,81 @@ function getPitching() {
   });
 }
 
-var score;
+let point = 0;
+let points = 0;
+let perfectPoint = 0;
 let overlaped = [];
+let num = 0;
+let timeoutId;
 //採点
 function scoring(current_Sp, overlaped_Sp) {
-  //console.log(overlaped_Sp.musicNum);
+  if (num != overlaped_Sp.musicNum) {
+    if (timeoutId) return;
 
-  overlaped.push(pitchSprite);
+    timeoutId = setTimeout(function () {
+      timeoutId = 0;
+      average();
+    }, 100);
+  }
+
+  if (overlaped_Sp.musicNum == melody.length - 1) {
+    if (
+      timeSprite.position.x >
+      overlaped_Sp.position.x + overlaped_Sp.width / 2
+    ) {
+      if (timeoutId) return;
+
+      timeoutId = setTimeout(function () {
+        timeoutId = 0;
+        average();
+      }, 100);
+    }
+  }
+  num = overlaped_Sp.musicNum;
+  console.log("番号", num);
+  overlaped.push(pitchSprite.pitch);
   console.log("周波数", pitchSprite.pitch);
-  console.log("基準周波数", overlaped_Sp.musicFreq);
+  //console.log("基準周波数", overlaped_Sp.musicFreq);
   let diff = abs(pitchSprite.pitch, overlaped_Sp.musicFreq);
   console.log("差分", diff);
+  if (diff > 10 && diff < 15) {
+    //console.log("惜しい");
+    point += 4;
+  }
   if (diff > 5 && diff < 10) {
-    console.log("惜しい");
-    score = 0;
+    //console.log("惜しい");
+    point += 6;
   }
   if (diff > 2 && diff < 5) {
-    console.log("だいたいOK");
-    score = 1;
+    //console.log("だいたいOK");
+    point += 8;
   }
   if (diff < 2) {
-    console.log("完璧");
-    score = 2;
+    //console.log("完璧");
+    point += 10;
   }
+  console.log("ポイント", point);
+  tf = true;
 }
+console.log("freq", overlaped);
 
 const abs = function (freq1, freq2) {
   let diff = freq1 - freq2;
   return diff < 0 ? -diff : diff;
 };
 
-console.log(overlaped);
+function average() {
+  //console.log(overlaped_Sp.musicNum);
+  console.log("音ごと合計", point);
+  ave = point / overlaped.length;
+  console.log("平均", ave);
+  points += ave;
+  console.log("合計", points);
+  overlaped.length = 0;
+  point = 0;
+  const b = document.getElementById("point");
+  b.textContent = parseInt(points);
+}
 
 function draw() {
   update();
@@ -170,7 +215,7 @@ function draw() {
   noStroke();
   fill(100);
   textSize(16);
-  text("start", 50, 45);
+  // text("start", 50, 45);
 
   drawPitch();
   if (started == true) {
@@ -254,6 +299,10 @@ function createMusic() {
     }
     musicGroup.add(sprite);
   }
+
+  perfectPoint = 10 * melody.length;
+  const b = document.getElementById("perfect");
+  b.textContent = parseInt(perfectPoint);
 }
 
 function update() {
@@ -276,14 +325,20 @@ function createTimeBar() {
   timeSprite.height = height;
   timeSprite.shapeColor = color(248, 225, 108);
 
-  startSp = createSprite(70, 40, 100, 30);
-  startSp.shapeColor = color(248, 225, 108);
+  // startSp = createSprite(70, 40, 100, 30);
+  // startSp.shapeColor = color(248, 225, 108);
 
-  startSp.onMousePressed = function () {
-    timeSprite.velocity.x = 1.67;
-    started = true;
-    getPitching();
-  };
+  // startSp.onMousePressed = function () {
+  //   timeSprite.velocity.x = 1.67;
+  //   started = true;
+  //   getPitching();
+  // };
+}
+
+function onClickButton() {
+  timeSprite.velocity.x = 1.67;
+  started = true;
+  getPitching();
 }
 
 function drawPitch() {
@@ -319,3 +374,5 @@ function drawPitch() {
     }
   }
 }
+
+new p5(sketch, "p5sketch");
