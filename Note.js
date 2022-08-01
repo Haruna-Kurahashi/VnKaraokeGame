@@ -71,7 +71,7 @@ class Note {
         break;
       case 61:
         this.staffNum = 1;
-        this.notePosY = 0;
+        this.notePosY = -staffHeight / 4;
         break;
       case 62:
         this.staffNum = 1;
@@ -219,6 +219,9 @@ class Note {
         break;
       case 0.5:
         this.noteWidth = 50;
+        break;
+      case 0.75:
+        this.noteWidth = 75;
         break;
       case 1:
         this.noteWidth = 100;

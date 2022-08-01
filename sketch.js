@@ -9,7 +9,7 @@ let currentNote = "";
 var musicGroup;
 var music = [];
 var toOnImage;
-var note_Img2, note_Img4, note_Img8, note_Img16;
+var note_Img2, note_Img4, note_Img8, note_Img8_5, note_Img16;
 var note_Img2_sharp, note_Img4_sharp, note_Img8_sharp, note_Img16_sharp;
 var timeSprite;
 var startSp;
@@ -31,17 +31,33 @@ var score;
 var pitchGroup;
 let startPosX = [];
 
-// const melody = [60, 62, 64, 65, 67, 69, 71, 72];
 const staffHeight = 35;
 const melody = [
-  [60, 2],
+  // [80, 1],
+  // [71, 0.5],
+  // [80, 0.5],
+  // [78, 0.5],
+  // [75, 0.5],
+  // [74, 0.5],
+  // [76, 0.5],
+  // [81, 1],
+  // [81, 1],
+  // [81, 1],
+  // [80, 1],
+  [64, 0.75],
+  [67, 0.25],
+  [67, 1],
+  [64, 0.75],
+  [62, 0.25],
+  [60, 1],
+  [62, 0.75],
+  [64, 0.25],
+  [67, 0.75],
+  [64, 0.25],
   [62, 2],
-  [64, 2],
-  [65, 2],
-  [67, 2],
-  // [69, 1],
-  // [71, 1],
-  // [72, 2],
+  // [60, 1],
+  // [61, 1],
+  // [62, 1],
 ];
 
 function preload() {
@@ -49,6 +65,7 @@ function preload() {
   note_Img2 = loadImage("./img/note2.svg");
   note_Img4 = loadImage("./img/note4.svg");
   note_Img8 = loadImage("./img/note8.svg");
+  note_Img8_5 = loadImage("./img/notehuten8.svg");
   note_Img16 = loadImage("./img/note16.svg");
 }
 
@@ -62,6 +79,26 @@ function setup() {
   createMusic();
   createTimeBar();
   fullscreen();
+  pitchGroup = new Group();
+}
+
+function draw() {
+  update();
+  background("#140d36");
+
+  //line(250, 0, 250, height);
+  //line(1057, 0, 1057, height);
+
+  drawSprites();
+
+  noStroke();
+  fill(100);
+  textSize(16);
+
+  drawPitch();
+  if (started == true) {
+    second = millis();
+  }
 }
 
 // オーディオの自動再生をブロックするChromeへの対処
@@ -88,40 +125,46 @@ function modelLoaded() {
 }
 
 function comparisonPitch() {
-  let low = staff[1];
-  let high = staff[4] - staffHeight / 2;
-  let basicFreq = midiToFreq(midiNum);
+  let staffPos = defNoteY(midiNum - 1);
+  let staffNum = staffPos[0];
+  let staffHPos = defNoteY(midiNum + 2);
+  let staffHNum = staffHPos[0];
+  let low = staff[staffNum] + staffPos[1];
+  let high = staff[staffHNum] + staffHPos[1];
   pitchHigh = 440 * Math.pow(2, (midiNum + 1 - 69) / 12);
   pitchLow = 440 * Math.pow(2, (midiNum - 1 - 69) / 12);
-  currentPitch2 = map(freq, 261.6, 523.3, low, high);
+  currentPitch2 = map(freq, pitchLow, pitchHigh, low, high);
   //console.log("基本周波数", basicFreq);
 }
 
 var count = 0;
 // 5) ピッチの値を得る
+
 function getPitching() {
-  pitchGroup = new Group();
   pitch.getPitch(function (err, frequency) {
     if (frequency) {
       // 与えられた周波数に最も近いMIDIノートを返す
       midiNum = freqToMidi(frequency);
+
       // そのMIDIノートに対応する今の音名(CからBまでの12個)
       currentNote = scale[midiNum % 12];
-      freq = frequency;
-      select("#freq").html(frequency);
-      select("#midi").html(midiNum);
-      select("#cde").html(currentNote);
+      if (midiNum >= 55) {
+        freq = frequency;
+        select("#freq").html(frequency);
+        select("#midi").html(midiNum);
+        select("#cde").html(currentNote);
 
-      pitchSprite = createSprite();
-      pitchSprite.width = 10;
-      pitchSprite.height = 10;
-      pitchSprite.position.x = timeSprite.position.x;
-      comparisonPitch();
-      pitchSprite.position.y = currentPitch2;
-      pitchSprite.shapeColor = color(255, 160, 0);
-      pitchSprite.pitch = freq;
-      pitchGroup.add(pitchSprite);
-      timeSprite.overlap(musicGroup, scoring);
+        pitchSprite = createSprite();
+        pitchSprite.width = 10;
+        pitchSprite.height = 6;
+        pitchSprite.position.x = timeSprite.position.x;
+        comparisonPitch();
+        pitchSprite.position.y = currentPitch2;
+        pitchSprite.shapeColor = color(255, 160, 0);
+        pitchSprite.pitch = freq;
+        pitchGroup.add(pitchSprite);
+        timeSprite.overlap(musicGroup, scoring);
+      }
     }
     getPitching();
   });
@@ -180,10 +223,10 @@ function scoring(current_Sp, overlaped_Sp) {
     //console.log("完璧");
     point += 10;
   }
-  console.log("ポイント", point);
+  // console.log("ポイント", point);
   tf = true;
 }
-console.log("freq", overlaped);
+// console.log("freq", overlaped);
 
 const abs = function (freq1, freq2) {
   let diff = freq1 - freq2;
@@ -192,35 +235,15 @@ const abs = function (freq1, freq2) {
 
 function average() {
   //console.log(overlaped_Sp.musicNum);
-  console.log("音ごと合計", point);
+  // console.log("音ごと合計", point);
   ave = point / overlaped.length;
-  console.log("平均", ave);
+  // console.log("平均", ave);
   points += ave;
-  console.log("合計", points);
+  // console.log("合計", points);
   overlaped.length = 0;
   point = 0;
   const b = document.getElementById("point");
   b.textContent = parseInt(points);
-}
-
-function draw() {
-  update();
-  background("#140d36");
-
-  //line(250, 0, 250, height);
-  //line(1057, 0, 1057, height);
-
-  drawSprites();
-
-  noStroke();
-  fill(100);
-  textSize(16);
-  // text("start", 50, 45);
-
-  drawPitch();
-  if (started == true) {
-    second = millis();
-  }
 }
 
 //五線譜描画
@@ -288,6 +311,9 @@ function createMusic() {
       case 0.5:
         sprite.addImage(note_Img8);
         break;
+      case 0.75:
+        sprite.addImage(note_Img8_5);
+        break;
       case 1:
         sprite.addImage(note_Img4);
         break;
@@ -303,18 +329,6 @@ function createMusic() {
   perfectPoint = 10 * melody.length;
   const b = document.getElementById("perfect");
   b.textContent = parseInt(perfectPoint);
-}
-
-function update() {
-  if (timeSprite.position.x > lastPosX) {
-    //musicGroup.removeSprites();
-  }
-  if (keyIsPressed) {
-    if (keyCode === ENTER) {
-      stoped = true;
-      timeSprite.velocity.x = 0;
-    }
-  }
 }
 
 function createTimeBar() {
@@ -336,41 +350,40 @@ function createTimeBar() {
 }
 
 function onClickButton() {
-  timeSprite.velocity.x = 1.67;
+  timeSprite.velocity.x = 1.4;
   started = true;
   getPitching();
 }
 
 function drawPitch() {
-  if (freq > 0 && pitchHigh > 0 && pitchLow > 0) {
-    // const low = staff[1];
-    // const high = staff[4] - staffHeight / 2;
-    // //currentPitch = map(freq, 261.6, 523.3, 400, 225);
-    // currentPitch = map(freq, 261.6, 523.3, low, high);
-    // //time = map(second, 0, 9000, 0, 1057);
-    // timeline = timeSprite.position.x;
-    // if (stoped == false) {
-    //   arrayX.push(timeline);
-    //   arrayY.push(currentPitch);
-    // }
-    // //console.log(second);
-    // stroke(119, 203, 185);
-    // strokeWeight(10);
-    // for (let i = -1; i < 10000; i++) {
-    //   fill(255, 0, 0);
-    //   line(arrayX[i - 1], arrayY[i - 1], arrayX[i], arrayY[i]);
-    // }
-    let endPosX = width;
-    if (timeSprite.position.x > endPosX) {
-      timeSprite.position.x = 150;
-      arrayX.length = 0;
-      arrayY.length = 0;
+  // const low = staff[1];
+  // const high = staff[4] - staffHeight / 2;
+  // //currentPitch = map(freq, 261.6, 523.3, 400, 225);
+  // currentPitch = map(freq, 261.6, 523.3, low, high);
+  // //time = map(second, 0, 9000, 0, 1057);
+  // timeline = timeSprite.position.x;
+  let endPosX = width;
+  if (timeSprite.position.x > endPosX) {
+    timeSprite.position.x = 150;
+  }
+  if (keyIsPressed) {
+    if (keyCode === ENTER) {
+      stoped = true;
+      timeSprite.velocity.x = 0;
     }
-    if (keyIsPressed) {
-      if (keyCode === ENTER) {
-        stoped = true;
-        timeSprite.velocity.x = 0;
-      }
+  }
+}
+
+function update() {
+  let endPosX = width;
+  if (timeSprite.position.x > endPosX) {
+    musicGroup.removeSprites();
+    pitchGroup.removeSprites();
+  }
+  if (keyIsPressed) {
+    if (keyCode === ENTER) {
+      stoped = true;
+      timeSprite.velocity.x = 0;
     }
   }
 }
