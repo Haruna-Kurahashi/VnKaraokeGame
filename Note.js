@@ -2,9 +2,10 @@ class Note {
   staffNum;
   notePosY;
 
-  constructor(midi_note, value_note) {
+  constructor(midi_note, value_note, symbol_note) {
     this.midiNote = midi_note;
     this.valueNote = value_note;
+    this.symbolNote = symbol_note;
     this.freq = 440;
     this.noteName = {};
     this.staffNum = 0;
@@ -14,7 +15,7 @@ class Note {
 
   set frequency(midi_note) {
     let freq = 440 * Math.pow(2, (midi_note - 69) / 12);
-    this.freq = Math.trunc(freq);
+    this.freq = freq;
   }
 
   get frequency() {

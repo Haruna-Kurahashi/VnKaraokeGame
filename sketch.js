@@ -11,6 +11,7 @@ var music = [];
 var toOnImage;
 var note_Img2, note_Img4, note_Img8, note_Img8_5, note_Img16;
 var note_Img2_sharp, note_Img4_sharp, note_Img8_sharp, note_Img16_sharp;
+var note_Img2_flat, note_Img4_flat, note_Img8_flat, note_Img16_flat;
 var timeSprite;
 var startSp;
 var pitchSprite;
@@ -20,7 +21,7 @@ var currentPitch;
 var currentPitch2;
 var second;
 var timeline;
-var started = false;
+let isStarted = false;
 var arrayX = [];
 var arrayY = [];
 var lastPosX = 0;
@@ -30,35 +31,51 @@ var cent;
 var score;
 var pitchGroup;
 let startPosX = [];
+let stopPos = 0;
+
+  // [80, 1, ],
+  // [71, 0.5, 0],
+  // [80, 0.5, 1],
+  // [78, 0.5, 1],
+  // [75, 0.5, 0],
+  // [74, 0.5, 1],
+  // [76, 0.5, 0],
+  // [81, 1, 3],
+  // [81, 1, 0],
+  // [81, 1, 0],
+  // [70, 1, 0],
+  // [60, 0.5, 0],
+  // [62, 0.5, 0],
+  // [64, 1, 0],
+  // [66, 1, 1],
+  // [67, 2, 0],
+
 
 const staffHeight = 35;
+
 const melody = [
-  // [80, 1],
-  // [71, 0.5],
-  // [80, 0.5],
-  // [78, 0.5],
-  // [75, 0.5],
-  // [74, 0.5],
-  // [76, 0.5],
-  // [81, 1],
-  // [81, 1],
-  // [81, 1],
-  // [80, 1],
-  [64, 0.75],
-  [67, 0.25],
-  [67, 1],
-  [64, 0.75],
-  [62, 0.25],
-  [60, 1],
-  [62, 0.75],
-  [64, 0.25],
-  [67, 0.75],
-  [64, 0.25],
-  [62, 2],
-  // [60, 1],
-  // [61, 1],
-  // [62, 1],
+  [64, 0.75, 0],
+  [67, 0.25, 0],
+  [67, 1, 0],
+  [64, 0.75, 0],
+  [62, 0.25, 0],
+  [60, 1, 0],
+  [62, 0.75, 0],
+  [64, 0.25, 0],
+  [67, 0.75, 0],
+  [64, 0.25, 0],
+  [62, 2, 0],
+
+  
 ];
+
+const melody2 = [
+  [62, 1, 0],
+  [64, 1, 0],
+  [62, 0.75, 0],
+  [60, 0.25, 0],
+  [60, 1, 0],
+]
 
 function preload() {
   //toOnImage = loadImage("./imgto-on.png");
@@ -67,6 +84,11 @@ function preload() {
   note_Img8 = loadImage("./img/note8.svg");
   note_Img8_5 = loadImage("./img/notehuten8.svg");
   note_Img16 = loadImage("./img/note16.svg");
+  note_Img2_sharp = loadImage("./img/note2_sharp.svg");
+  note_Img4_sharp = loadImage("./img/note4_sharp.svg");
+  note_Img8_sharp = loadImage("./img/note8_sharp.svg");
+  note_Img16_sharp = loadImage("./img/note16_sharp.svg");
+  note_Img4_flat = loadImage("./img/note4_flat.svg");
 }
 
 function setup() {
@@ -96,8 +118,10 @@ function draw() {
   textSize(16);
 
   drawPitch();
-  if (started == true) {
-    second = millis();
+
+  if (isStarted) {
+    timeSprite.velocity.x = 120 / 60;
+    stopPos = timeSprite.position.x;
   }
 }
 
@@ -183,6 +207,7 @@ function scoring(current_Sp, overlaped_Sp) {
 
     timeoutId = setTimeout(function () {
       timeoutId = 0;
+      console.log(overlaped.length);
       average();
     }, 100);
   }
@@ -201,41 +226,44 @@ function scoring(current_Sp, overlaped_Sp) {
     }
   }
   num = overlaped_Sp.musicNum;
-  console.log("番号", num);
+  //console.log("番号", num);
   overlaped.push(pitchSprite.pitch);
-  console.log("周波数", pitchSprite.pitch);
-  //console.log("基準周波数", overlaped_Sp.musicFreq);
-  let diff = abs(pitchSprite.pitch, overlaped_Sp.musicFreq);
-  console.log("差分", diff);
-  if (diff > 10 && diff < 15) {
+  // console.log("周波数", pitchSprite.pitch);
+  // console.log("基準周波数", overlaped_Sp.musicFreq);
+  let diff = conversion(pitchSprite.pitch, overlaped_Sp.musicFreq);
+  //console.log("差分", diff);
+  if (diff > 30 && diff < 50) {
+    point += 3;
+  }
+  if (diff > 20 && diff < 30) {
     //console.log("惜しい");
-    point += 4;
+    point += 5;
+  }
+  if (diff > 10 && diff < 20) {
+    //console.log("惜しい");
+    point += 7;
   }
   if (diff > 5 && diff < 10) {
-    //console.log("惜しい");
-    point += 6;
-  }
-  if (diff > 2 && diff < 5) {
     //console.log("だいたいOK");
-    point += 8;
+    point += 9;
   }
-  if (diff < 2) {
+  if (diff < 5) {
     //console.log("完璧");
     point += 10;
   }
   // console.log("ポイント", point);
-  tf = true;
 }
 // console.log("freq", overlaped);
 
-const abs = function (freq1, freq2) {
-  let diff = freq1 - freq2;
+const conversion = function (freq1, freq2) {
+  let diff = 1200 * Math.log2(freq1 / freq2);
   return diff < 0 ? -diff : diff;
 };
 
 function average() {
   //console.log(overlaped_Sp.musicNum);
   // console.log("音ごと合計", point);
+  // console.log("数", overlaped.length);
   ave = point / overlaped.length;
   // console.log("平均", ave);
   points += ave;
@@ -243,7 +271,7 @@ function average() {
   overlaped.length = 0;
   point = 0;
   const b = document.getElementById("point");
-  b.textContent = parseInt(points);
+  b.textContent = Math.round(points);
 }
 
 //五線譜描画
@@ -273,14 +301,17 @@ function createMusic() {
 
   //Noteクラスインスタンス生成
   for (let i = 0; i < melody.length; i++) {
-    const note = new Note(melody[i][0], melody[i][1]);
+    const note = new Note(melody[i][0], melody[i][1], melody[i][2]);
     note.frequency = melody[i][0];
     note.name = melody[i][0];
     note.defNoteY = melody[i][0];
     note.valueNoteToWidth = melody[i][1];
+    note.symbolNote = melody[i][2];
+    if (melody[i][2] == undefined) {
+      note.symbolNote = 0;
+    }
     score.push(note);
   }
-  //console.log(score);
 
   //譜面スプライト生成
   const startPos = 300;
@@ -302,27 +333,68 @@ function createMusic() {
     lastPosX = sprite.position.x;
     sprite.musicFreq = score[i].freq;
     sprite.musicNum = i;
-    sprite.shapeColor = color(190, 233, 232);
+    // sprite.shapeColor = color(190, 233, 232);
 
-    switch (score[i].valueNote) {
-      case 0.25:
+    // console.log(score[i].symbolNote);
+    if (score[i].symbolNote == 0) {
+      if (score[i].valueNote == 0.25) {
         sprite.addImage(note_Img16);
-        break;
-      case 0.5:
+      }
+      if (score[i].valueNote == 0.5) {
         sprite.addImage(note_Img8);
-        break;
-      case 0.75:
+      }
+      if (score[i].valueNote == 0.75) {
         sprite.addImage(note_Img8_5);
-        break;
-      case 1:
+      }
+      if (score[i].valueNote == 1) {
         sprite.addImage(note_Img4);
-        break;
-      case 1.5:
-        break;
-      case 2:
+      }
+      if (score[i].valueNote == 2) {
         sprite.addImage(note_Img2);
-        break;
+      }
     }
+    if (score[i].symbolNote == 1) {
+      if (score[i].valueNote == 0.25) {
+        sprite.addImage(note_Img16_sharp);
+      }
+      if (score[i].valueNote == 0.5) {
+        sprite.addImage(note_Img8_sharp);
+      }
+      if (score[i].valueNote == 1) {
+        sprite.addImage(note_Img4_sharp);
+      }
+    }
+    if (score[i].symbolNote == 2) {
+      if (score[i].valueNote == 0.25) {
+        sprite.addImage(note_Img16_flat);
+      }
+      if (score[i].valueNote == 0.5) {
+        sprite.addImage(note_Img8_flat);
+      }
+      if (score[i].valueNote == 1) {
+        sprite.addImage(note_Img4_flat);
+      }
+    }
+    if (score[i].symbolNote == 3) {
+      if (score[i].valueNote == 0.25) {
+        sprite.shapeColor = color(255, 255, 255, 0);
+      }
+      if (score[i].valueNote == 0.5) {
+        sprite.shapeColor = color(255, 255, 255, 0);
+      }
+      if (score[i].valueNote == 0.75) {
+        sprite.shapeColor = color(255, 255, 255, 0);
+      }
+      if (score[i].valueNote == 1) {
+        sprite.shapeColor = color(255, 255, 255, 0);
+      }
+      if (score[i].valueNote == 2) {
+        sprite.shapeColor = color(255, 255, 255, 0);
+      }
+   
+    }
+
+
     musicGroup.add(sprite);
   }
 
@@ -339,9 +411,6 @@ function createTimeBar() {
   timeSprite.height = height;
   timeSprite.shapeColor = color(248, 225, 108);
 
-  // startSp = createSprite(70, 40, 100, 30);
-  // startSp.shapeColor = color(248, 225, 108);
-
   // startSp.onMousePressed = function () {
   //   timeSprite.velocity.x = 1.67;
   //   started = true;
@@ -350,8 +419,8 @@ function createTimeBar() {
 }
 
 function onClickButton() {
-  timeSprite.velocity.x = 1.4;
-  started = true;
+  // timeSprite.velocity.x = 1.4;
+  isStarted = true;
   getPitching();
 }
 
@@ -380,12 +449,18 @@ function update() {
     musicGroup.removeSprites();
     pitchGroup.removeSprites();
   }
-  if (keyIsPressed) {
-    if (keyCode === ENTER) {
-      stoped = true;
-      timeSprite.velocity.x = 0;
-    }
-  }
+
+  
 }
+
+function keyReleased() {
+  // console.log(keyCode)
+  // if (keyCode == 13) {
+  //   timeSprite.velocity.x = 0;
+  // } else {
+  //   timeSprite.velocity.x = 200 /60;
+  // }
+}
+
 
 new p5(sketch, "p5sketch");
