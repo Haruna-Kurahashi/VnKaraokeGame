@@ -69,14 +69,6 @@ const melody = [
   
 ];
 
-const melody2 = [
-  [62, 1, 0],
-  [64, 1, 0],
-  [62, 0.75, 0],
-  [60, 0.25, 0],
-  [60, 1, 0],
-]
-
 function preload() {
   //toOnImage = loadImage("./imgto-on.png");
   note_Img2 = loadImage("./img/note2.svg");
@@ -117,7 +109,7 @@ function draw() {
   fill(100);
   textSize(16);
 
-  drawPitch();
+  controlGame();
 
   if (isStarted) {
     timeSprite.velocity.x = 120 / 60;
@@ -424,13 +416,7 @@ function onClickButton() {
   getPitching();
 }
 
-function drawPitch() {
-  // const low = staff[1];
-  // const high = staff[4] - staffHeight / 2;
-  // //currentPitch = map(freq, 261.6, 523.3, 400, 225);
-  // currentPitch = map(freq, 261.6, 523.3, low, high);
-  // //time = map(second, 0, 9000, 0, 1057);
-  // timeline = timeSprite.position.x;
+function controlGame() {
   let endPosX = width;
   if (timeSprite.position.x > endPosX) {
     timeSprite.position.x = 150;
