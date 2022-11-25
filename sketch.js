@@ -32,24 +32,24 @@ var score;
 var pitchGroup;
 let startPosX = [];
 let stopPos = 0;
+var pitchArray = [];
 
-  // [80, 1, ],
-  // [71, 0.5, 0],
-  // [80, 0.5, 1],
-  // [78, 0.5, 1],
-  // [75, 0.5, 0],
-  // [74, 0.5, 1],
-  // [76, 0.5, 0],
-  // [81, 1, 3],
-  // [81, 1, 0],
-  // [81, 1, 0],
-  // [70, 1, 0],
-  // [60, 0.5, 0],
-  // [62, 0.5, 0],
-  // [64, 1, 0],
-  // [66, 1, 1],
-  // [67, 2, 0],
-
+// [80, 1, ],
+// [71, 0.5, 0],
+// [80, 0.5, 1],
+// [78, 0.5, 1],
+// [75, 0.5, 0],
+// [74, 0.5, 1],
+// [76, 0.5, 0],
+// [81, 1, 3],
+// [81, 1, 0],
+// [81, 1, 0],
+// [70, 1, 0],
+// [60, 0.5, 0],
+// [62, 0.5, 0],
+// [64, 1, 0],
+// [66, 1, 1],
+// [67, 2, 0],
 
 const staffHeight = 35;
 
@@ -65,17 +65,7 @@ const melody = [
   [67, 0.75, 0],
   [64, 0.25, 0],
   [62, 2, 0],
-
-  
 ];
-
-const melody2 = [
-  [62, 1, 0],
-  [64, 1, 0],
-  [62, 0.75, 0],
-  [60, 0.25, 0],
-  [60, 1, 0],
-]
 
 function preload() {
   //toOnImage = loadImage("./imgto-on.png");
@@ -108,16 +98,42 @@ function draw() {
   update();
   background("#140d36");
 
-  //line(250, 0, 250, height);
-  //line(1057, 0, 1057, height);
-
   drawSprites();
 
   noStroke();
   fill(100);
   textSize(16);
 
-  drawPitch();
+  controlGamePlay();
+
+  beginShape(LINES);
+
+  noFill();
+  stroke(255, 255, 0);
+  strokeWeight(4);
+  vertex(30, 20);
+
+  vertex(85, 20);
+  endShape();
+  beginShape(LINES);
+  vertex(100, 75);
+
+  vertex(150, 75);
+  endShape();
+
+  beginShape(LINES);
+  for (var i = 0; i < pitchArray.length; i++) {
+    noFill();
+    stroke(255, 255, 0);
+    strokeWeight(4);
+    const pitchPosX = pitchArray.map((item) => item[0]);
+
+    if (pitchPosX[i] - pitchPosX[i - 1] > 10) {
+      endShape();    
+    }
+    vertex(pitchArray[i][0], pitchArray[i][1]);
+  }
+  endShape();
 
   if (isStarted) {
     timeSprite.velocity.x = 120 / 60;
@@ -157,7 +173,7 @@ function comparisonPitch() {
   let high = staff[staffHNum] + staffHPos[1];
   pitchHigh = 440 * Math.pow(2, (midiNum + 1 - 69) / 12);
   pitchLow = 440 * Math.pow(2, (midiNum - 1 - 69) / 12);
-  currentPitch2 = map(freq, pitchLow, pitchHigh, low, high);
+  currentPitch = map(freq, pitchLow, pitchHigh, low, high);
   //console.log("基本周波数", basicFreq);
 }
 
@@ -178,16 +194,22 @@ function getPitching() {
         select("#midi").html(midiNum);
         select("#cde").html(currentNote);
 
-        pitchSprite = createSprite();
-        pitchSprite.width = 10;
-        pitchSprite.height = 6;
-        pitchSprite.position.x = timeSprite.position.x;
+        // pitchSprite = createSprite();
+        // pitchSprite.width = 10;
+        // pitchSprite.height = 6;
+        // pitchSprite.position.x = timeSprite.position.x;
         comparisonPitch();
-        pitchSprite.position.y = currentPitch2;
-        pitchSprite.shapeColor = color(255, 160, 0);
-        pitchSprite.pitch = freq;
-        pitchGroup.add(pitchSprite);
-        timeSprite.overlap(musicGroup, scoring);
+        // pitchSprite.position.y = currentPitch2;
+        // pitchSprite.shapeColor = color(255, 160, 0);
+        // pitchSprite.pitch = freq;
+        // pitchGroup.add(pitchSprite);
+        // timeSprite.overlap(musicGroup, scoring);
+
+        const pitchPosX = pitchArray.map((item) => item[0]);
+        if (timeSprite.position.x != pitchPosX[pitchPosX.length - 1]) {
+          pitchArray.push([timeSprite.position.x, currentPitch]);
+          console.log("ピッチ配列", pitchArray);
+        }
       }
     }
     getPitching();
@@ -391,9 +413,7 @@ function createMusic() {
       if (score[i].valueNote == 2) {
         sprite.shapeColor = color(255, 255, 255, 0);
       }
-   
     }
-
 
     musicGroup.add(sprite);
   }
@@ -424,20 +444,14 @@ function onClickButton() {
   getPitching();
 }
 
-function drawPitch() {
-  // const low = staff[1];
-  // const high = staff[4] - staffHeight / 2;
-  // //currentPitch = map(freq, 261.6, 523.3, 400, 225);
-  // currentPitch = map(freq, 261.6, 523.3, low, high);
-  // //time = map(second, 0, 9000, 0, 1057);
-  // timeline = timeSprite.position.x;
+function controlGamePlay() {
   let endPosX = width;
   if (timeSprite.position.x > endPosX) {
     timeSprite.position.x = 150;
   }
   if (keyIsPressed) {
     if (keyCode === ENTER) {
-      stoped = true;
+      isStarted = false;
       timeSprite.velocity.x = 0;
     }
   }
@@ -449,18 +463,6 @@ function update() {
     musicGroup.removeSprites();
     pitchGroup.removeSprites();
   }
-
-  
 }
-
-function keyReleased() {
-  // console.log(keyCode)
-  // if (keyCode == 13) {
-  //   timeSprite.velocity.x = 0;
-  // } else {
-  //   timeSprite.velocity.x = 200 /60;
-  // }
-}
-
 
 new p5(sketch, "p5sketch");
