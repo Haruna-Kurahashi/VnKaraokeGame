@@ -2,6 +2,7 @@ class Note {
   staffNum;
   notePosY;
 
+  //MIDI番号、音価、臨時記号
   constructor(midi_note, value_note, symbol_note) {
     this.midiNote = midi_note;
     this.valueNote = value_note;
@@ -11,6 +12,7 @@ class Note {
     this.staffNum = 0;
     this.notePosY = 0;
     this.noteWidth = 100;
+    this.musicNum = 0;
   }
 
   set frequency(midi_note) {
