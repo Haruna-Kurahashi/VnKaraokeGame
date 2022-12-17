@@ -21,8 +21,6 @@ var currentPitchY;
 var second;
 var timeline;
 let isStarted = false;
-var arrayX = [];
-var arrayY = [];
 var lastPosX = 0;
 var sprite;
 var stoped = false;
@@ -40,37 +38,46 @@ let overlaped = [];
 let musicNum = 0;
 let timeoutId;
 
-// [80, 1, ],
+
+
+const staffHeight = 35;
+
+const melody = [
+  [64, 0.75, 0],
+  // [67, 0.25, 0],
+  // [67, 1, 0],
+  // [64, 0.75, 0],
+  // [62, 0.25, 0],
+  // [60, 1, 0],
+  // [62, 0.75, 0],
+  // [64, 0.25, 0],
+  // [67, 0.75, 0],
+  // [64, 0.25, 0],
+  // [62, 2, 0],
+
+  [80, 1, ],
+[71, 0.5, 0],
+[80, 0.5, 1],
+[78, 0.5, 1],
+[75, 0.5, 0],
+[74, 0.5, 1],
+[76, 0.5, 0],
+[81, 1, 0],
+[81, 1, 0],
+[81, 1, 0],
+//   [70, 1, 0],
+//   [80, 1, ],
 // [71, 0.5, 0],
 // [80, 0.5, 1],
 // [78, 0.5, 1],
 // [75, 0.5, 0],
 // [74, 0.5, 1],
 // [76, 0.5, 0],
-// [81, 1, 3],
+// [81, 1, 0],
 // [81, 1, 0],
 // [81, 1, 0],
 // [70, 1, 0],
-// [60, 0.5, 0],
-// [62, 0.5, 0],
-// [64, 1, 0],
-// [66, 1, 1],
-// [67, 2, 0],
 
-const staffHeight = 35;
-
-const melody = [
-  [64, 0.75, 0],
-  [67, 0.25, 0],
-  [67, 1, 0],
-  [64, 0.75, 0],
-  [62, 0.25, 0],
-  [60, 1, 0],
-  [62, 0.75, 0],
-  [64, 0.25, 0],
-  [67, 0.75, 0],
-  [64, 0.25, 0],
-  [62, 2, 0],
 ];
 
 function preload() {
@@ -88,12 +95,13 @@ function preload() {
 }
 
 function setup() {
-  console.log("幅", windowWidth);
-  createCanvas(windowWidth, 450);
-  
+  const canvas = createCanvas(windowWidth, 450);
+  canvas.parent("p5sketch");
+
   // 1) マイクからオーディオ入力(AudioIn)を作成し、マイクをオンにする。
   audioContext = getAudioContext();
   mic = new p5.AudioIn();
+  mic.start(startPitch);
   createStaff();
   createMusic();
   createTimeBar();
@@ -126,54 +134,38 @@ function draw() {
 
   // vertex(150, 75);
   // endShape();
-
-
-  // for (let j = 0; j < allPArray.length; j++) {
-  //   beginShape();
-  //   for (var i = 0; i < allPArray[j].length; i++) {
-  //     noFill();
-  //     stroke(255, 255, 0);
-  //     strokeWeight(4);
-
-  //     vertex(allPArray[j][i].x, allPArray[j][i].y);
-  //   }
-  //   endShape();
-  // }
-  beginShape();
-  for (var i = 0; i < pitchArray.length; i++) {
-    noFill();
-    stroke(255, 255, 0);
-    strokeWeight(4);
-    // const pitchPosX = pitchArray.map((item) => item[0]);
-
-    // if (pitchPosX[i] - pitchPosX[i - 1] > 10) {
-    //   endShape();
-    // }
-    vertex(pitchArray[i].x, pitchArray[i].y);
+  noFill();
+  stroke(255, 255, 0);
+  strokeWeight(4);
+  if (pitchArray.length > 0) {
+    for (let j = 0; j < pitchArray.length; j++) {
+      beginShape();
+      for (var i = 0; i < pitchArray[j].length; i++) {
+        if (i > 0 && pitchArray[j][i].vol > 0.01) {
+          vertex(pitchArray[j][i].x, pitchArray[j][i].y);
+        }
+      }
+      endShape();
+    }
   }
-  endShape();
-  
-
-
   if (isStarted) {
-    timeSprite.velocity.x = 120 / 60;
+    timeSprite.velocity.x = 120 / 50;
     stopPos = timeSprite.position.x;
   }
-
 }
 
 // オーディオの自動再生をブロックするChromeへの対処
 // 2) ユーザーの画面クリックでAudioContextオブジェクトを取得し、処理をスタート
-// function touchStarted() {
-//   // AudioContextオブジェクトを得る
-//   if (getAudioContext().state !== "running") {
-//     audioContext = getAudioContext();
-//     // あらかじめ中断させられた音声コンテキストの時間の進行を返す。
-//     audioContext.resume();
-//     // ここから本格スタート
-//     startPitch();
-//   }
-// }
+function touchStarted() {
+  // AudioContextオブジェクトを得る
+  if (getAudioContext().state !== "running") {
+    audioContext = getAudioContext();
+    // あらかじめ中断させられた音声コンテキストの時間の進行を返す。
+    audioContext.resume();
+    // ここから本格スタート
+    startPitch();
+  }
+}
 
 // 3) ml5.pitchDetection()でAudioContext、マイク、モデルを関連付ける。
 function startPitch() {
@@ -198,14 +190,18 @@ function comparisonPitch() {
   //console.log("基本周波数", basicFreq);
 }
 
-var count = 1;
-let isDetecPitch = false;
+let isDetectPitch = false;
+let pIndex = 0;
+let prePitchPosX = 0;
 // 5) ピッチの値を得る
 function getPitching() {
+  if (!isStarted) {
+    return;
+  }
   pitch.getPitch(function (err, frequency) {
-    // console.log("エラー",frequency);
+    // console.log("周波数", frequency);
     if (frequency) {
-      isDetecPitch = true;
+      isDetectPitch = true;
       // 与えられた周波数に最も近いMIDIノートを返す
       midiNum = freqToMidi(frequency);
 
@@ -218,29 +214,29 @@ function getPitching() {
         select("#cde").html(currentNote);
         comparisonPitch();
 
+        const vol = mic.getLevel();
+        if (timeSprite.position.x != prePitchPosX) {
+          pitchArray[pIndex].push({
+            x: timeSprite.position.x,
+            y: currentPitchY,
+            freq: freq,
+            vol: vol,
+          });
+          prePitchPosX = timeSprite.position.x;
+        }
+
+        console.log("ピッチ配列", pitchArray);
         timeSprite.overlap(musicGroup, scoring);
-
-        // if (pitchArray.length > 0) {
-
-        //   if (timeSprite.position.x - pitchArray[pitchArray.length - 1].x > 10) {
-
-        //     allPArray.push(pitchArray.slice());
-        //     pitchArray.length = 0
-        //     console.log("ピッチ配列", allPArray);
-        //   } 
-        // }
-        pitchArray[0].push({ x: timeSprite.position.x, y: currentPitchY, freq: freq });
-
-        // console.log("ピッチ配列", pitchArray);
- 
       }
     } else {
       //音を認識してない状態
-      if (isDetecPitch) {
-        isDetecPitch = false;
-        console.log("切れ目----------")
+      if (isDetectPitch) {
+        console.log("切れ目----------");
+        isDetectPitch = false;
+        pIndex++;
+        console.log("インデックス", pIndex);
+        pitchArray[pIndex] = [];
       }
-
     }
     getPitching();
   });
@@ -272,7 +268,6 @@ function scoring(current_Sp, overlaped_Sp) {
   }
   // console.log("カウント", overlaped_Sp.musicNum);
   musicNum = overlaped_Sp.musicNum;
-
 
   // overlaped.push(pitchSprite.pitch);
   // console.log("周波数", pitchSprite.pitch);
@@ -312,11 +307,11 @@ function average() {
   //console.log(overlaped_Sp.musicNum);
   // console.log("音ごと合計", point);
   // console.log("数", overlaped.length);
-  ave = point / overlaped.length;
+  // ave = point / overlaped.length;
   // console.log("平均", ave);
-  points += ave;
+  // points += ave;
   // console.log("合計", points);
-  overlaped.length = 0;
+  // overlaped.length = 0;
   point = 0;
   const b = document.getElementById("point");
   b.textContent = Math.round(points);
@@ -346,6 +341,9 @@ function createMusic() {
   //melodyToHeight();
   // const toOnSprite = createSprite(100, 250);
   // toOnSprite.addImage(toOnImage);
+  if (!melody.length) {
+    return;
+  }
 
   //Noteクラスインスタンス生成
   for (let i = 0; i < melody.length; i++) {
@@ -360,6 +358,7 @@ function createMusic() {
       note.symbolNote = 0;
     }
     score.push(note);
+    // console.log(score);
   }
 
   //譜面スプライト生成
@@ -379,10 +378,11 @@ function createMusic() {
         lastPosX + (score[i - 1].noteWidth / 2 + score[i].noteWidth / 2);
       startPosX.push(lastPosX + score[i - 1].noteWidth / 2);
     }
+
     lastPosX = sprite.position.x;
     sprite.musicFreq = score[i].freq;
     sprite.musicNum = score[i].musicNum;
-    
+
     // sprite.shapeColor = color(190, 233, 232);
 
     // console.log(score[i].symbolNote);
@@ -442,8 +442,9 @@ function createMusic() {
         sprite.shapeColor = color(255, 255, 255, 0);
       }
     }
-
     musicGroup.add(sprite);
+    if (sprite.position.x > width) {
+    }
   }
   perfectPoint = 10 * melody.length;
   const b = document.getElementById("perfect");
@@ -468,7 +469,6 @@ function createTimeBar() {
 function onClickButton() {
   // timeSprite.velocity.x = 1.4;
   isStarted = true;
-  mic.start(startPitch);
   getPitching();
 }
 
@@ -490,7 +490,7 @@ function update() {
   if (timeSprite.position.x > endPosX) {
     musicGroup.removeSprites();
     pitchGroup.removeSprites();
+    pitchArray.length = 0;
+    pIndex = 0;
   }
 }
-
-new p5(sketch, "p5sketch");
