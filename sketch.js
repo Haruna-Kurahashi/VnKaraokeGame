@@ -38,12 +38,7 @@ let overlaped = [];
 let musicNum = 0;
 let timeoutId;
 
-
-
-const staffHeight = 35;
-
-const melody = [
-  [64, 0.75, 0],
+// [64, 0.75, 0],
   // [67, 0.25, 0],
   // [67, 1, 0],
   // [64, 0.75, 0],
@@ -55,16 +50,16 @@ const melody = [
   // [64, 0.25, 0],
   // [62, 2, 0],
 
-  [80, 1, ],
-[71, 0.5, 0],
-[80, 0.5, 1],
-[78, 0.5, 1],
-[75, 0.5, 0],
-[74, 0.5, 1],
-[76, 0.5, 0],
-[81, 1, 0],
-[81, 1, 0],
-[81, 1, 0],
+//   [80, 1, ],
+// [71, 0.5, 0],
+// [80, 0.5, 1],
+// [78, 0.5, 1],
+// [75, 0.5, 0],
+// [74, 0.5, 1],
+// [76, 0.5, 0],
+// [81, 1, 0],
+// [81, 1, 0],
+// [81, 1, 0],
 //   [70, 1, 0],
 //   [80, 1, ],
 // [71, 0.5, 0],
@@ -78,6 +73,17 @@ const melody = [
 // [81, 1, 0],
 // [70, 1, 0],
 
+const staffHeight = 35;
+
+const melody = [
+  [60, 1, 0],
+  [62, 1, 0],
+  [64, 1, 0],
+  [65, 1, 0],
+  [67, 1, 0],
+  [69, 1, 0],
+  [71, 1, 0],
+  [72, 1, 0],
 ];
 
 function preload() {
@@ -126,10 +132,10 @@ function draw() {
   // noFill();
   // stroke(255, 255, 0);
   // strokeWeight(4);
-  // vertex(30, 20);
-  // vertex(85, 20);
+  // vertex(300, 300);
+  // vertex(250, 300);
   // endShape();
-  // beginShape();
+  // // beginShape();
   // vertex(120, 75);
 
   // vertex(150, 75);
@@ -214,28 +220,44 @@ function getPitching() {
         select("#cde").html(currentNote);
         comparisonPitch();
 
+     
         const vol = mic.getLevel();
         if (timeSprite.position.x != prePitchPosX) {
-          pitchArray[pIndex].push({
-            x: timeSprite.position.x,
-            y: currentPitchY,
-            freq: freq,
-            vol: vol,
-          });
-          prePitchPosX = timeSprite.position.x;
+          if (vol > 0.01) {
+            pitchArray[pIndex].push({
+              x: timeSprite.position.x,
+              y: currentPitchY,
+              freq: freq,
+              vol: vol,
+            });
+            timeSprite.overlap(musicGroup, scoring);
+            if (timeSprite.overlap(musicGroup)) {
+        
+              const pStartPosX = musicGroup[musicNum].position.x - (score[musicNum].noteWidth / 2)
+              let diffX = Math.abs(timeSprite.position.x - pStartPosX);
+              if (diffX < 10) {
+            
+              }
+            }
+            prePitchPosX = timeSprite.position.x;
+          }
         }
 
-        console.log("ピッチ配列", pitchArray);
-        timeSprite.overlap(musicGroup, scoring);
+        // console.log("ピッチ配列", pitchArray);
+
+      
+        // console.log("重なり判定", timeSprite.overlap(musicGroup));
+        // console.log("番号", musicNum);
       }
     } else {
       //音を認識してない状態
       if (isDetectPitch) {
-        console.log("切れ目----------");
+        // console.log("切れ目----------");
         isDetectPitch = false;
         pIndex++;
-        console.log("インデックス", pIndex);
+        // console.log("インデックス", pIndex);
         pitchArray[pIndex] = [];
+      
       }
     }
     getPitching();
@@ -251,6 +273,9 @@ function scoring(current_Sp, overlaped_Sp) {
       timeoutId = 0;
       average();
     }, 100);
+    const pStartPosX = musicGroup[musicNum].position.x - (score[musicNum].noteWidth / 2)
+    let diffX = Math.abs(timeSprite.position.x - pStartPosX);
+    console.log("番号", diffX);
   }
 
   if (overlaped_Sp.musicNum == melody.length - 1) {
@@ -266,37 +291,42 @@ function scoring(current_Sp, overlaped_Sp) {
       }, 100);
     }
   }
-  // console.log("カウント", overlaped_Sp.musicNum);
-  musicNum = overlaped_Sp.musicNum;
+  // console.log("ピッチ配列scoreの中", freq);
+  // console.log("ピッチ配列scoreの中", pitchArray);
 
-  // overlaped.push(pitchSprite.pitch);
-  // console.log("周波数", pitchSprite.pitch);
-  // console.log("基準周波数", overlaped_Sp.musicFreq);
-  // let diff = conversion(pitchSprite.pitch, overlaped_Sp.musicFreq);
-  // //console.log("差分", diff);
-  // if (diff > 30 && diff < 50) {
-  //   point += 3;
-  // }
-  // if (diff > 20 && diff < 30) {
-  //   //console.log("惜しい");
-  //   point += 5;
-  // }
-  // if (diff > 10 && diff < 20) {
-  //   //console.log("惜しい");
-  //   point += 7;
-  // }
-  // if (diff > 5 && diff < 10) {
-  //   //console.log("だいたいOK");
-  //   point += 9;
-  // }
-  // if (diff < 5) {
-  //   //console.log("完璧");
-  //   point += 10;
-  // }
+  // console.log("カウント", overlaped_Sp.musicNum);
+
+  musicNum = overlaped_Sp.musicNum
+  // console.log("譜面", musicGroup[musicNum].position.x);
+
+  overlaped.push(freq);
+  console.log("周波数", freq);
+  console.log("基準周波数", overlaped_Sp.musicFreq);
+  let diff = conversion(freq, overlaped_Sp.musicFreq);
+  // console.log("差分", diff);
+  if (diff > 30 && diff < 50) {
+    point += 3;
+  }
+  if (diff > 20 && diff < 30) {
+    // console.log("惜しい");
+    point += 5;
+  }
+  if (diff > 10 && diff < 20) {
+    // console.log("惜しい");
+    point += 7;
+  }
+  if (diff > 5 && diff < 10) {
+    // console.log("だいたいOK");
+    point += 9;
+  }
+  if (diff < 5) {
+    // console.log("完璧");
+    point += 10;
+  }
 
   // console.log("ポイント", point);
 }
-// console.log("freq", overlaped);
+
 
 const conversion = function (freq1, freq2) {
   let diff = 1200 * Math.log2(freq1 / freq2);
@@ -304,14 +334,14 @@ const conversion = function (freq1, freq2) {
 };
 
 function average() {
-  //console.log(overlaped_Sp.musicNum);
-  // console.log("音ごと合計", point);
-  // console.log("数", overlaped.length);
-  // ave = point / overlaped.length;
-  // console.log("平均", ave);
-  // points += ave;
-  // console.log("合計", points);
-  // overlaped.length = 0;
+  console.log(musicNum);
+  console.log("音ごと合計", point);
+  console.log("数", overlaped.length);
+  ave = point / overlaped.length;
+  console.log("平均", ave);
+  points += ave;
+  console.log("合計----------------------", points);
+  overlaped.length = 0;
   point = 0;
   const b = document.getElementById("point");
   b.textContent = Math.round(points);

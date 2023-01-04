@@ -1,0 +1,49 @@
+* {
+    margin: 0;
+    padding: 0;
+    font-family: "Mochiy Pop One", "ヒラギノ角ゴ Pro W3",
+      "Hiragino Kaku Gothic Pro", "メイリオ", "Meiryo", sans-serif;
+  }
+  
+  html {
+    font-size: 100px;
+  }
+  
+  body {
+    width: 100%;
+    font-size: 0.16rem;
+    background-color: #140d36;
+  }
+  
+  canvas {
+    display: block;
+  }
+  
+  nav {
+    display: flex;
+    flex-direction: row-reverse;
+    margin-bottom: 8vh;
+  }
+  
+  .home-link {
+    height: 0.3rem;
+    display: inline-block;
+    background-color: #3d3a60;
+    padding: 0.15rem;
+    border-radius: 0.12rem;
+    margin: 0.2rem 0.2rem 0 0;
+  }
+  
+  .home-icon {
+    width: 0.35rem;
+    fill: #fff;
+  }
+  
+  .home-link:hover {
+    background-color: #42426f;
+  }
+  
+  .home-link:hover path {
+    fill: #d7d9ff;
+  }
+  
