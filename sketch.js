@@ -154,6 +154,7 @@ function draw() {
       endShape();
     }
   }
+
   if (isStarted) {
     timeSprite.velocity.x = 120 / 50;
     stopPos = timeSprite.position.x;
@@ -501,6 +502,7 @@ function onClickButton() {
   isStarted = true;
   getPitching();
 }
+
 
 function controlGamePlay() {
   let endPosX = width;
