@@ -1,12 +1,17 @@
-let a_Achord;
-let e_Achord;
-let c_Achord;
-let tonicTone;
-let dominantTone;
-let mediantTone;
+let note1;
+let note2;
+let noteQuiz;
 let standardFreq = 440;
 let micFreq;
-let quizKey;
+let key = {};
+let quizKey = [];
+let quizNum = 3;
+let quizCount = 0;
+let gameState;
+
+// let note3;
+// let note4;
+// let note5;
 // const majorKey = ["C", "G", "D", "A", "E", "B", "Fsharp", "Csharp", "F", "Bflat", "Aflat", "Dflat", "Gflat", "Cflat"];
 const majorKey = ["C", "G", "D", "A", "E", "B"];
 const harmonyKey = new HarmonyKey();
@@ -14,18 +19,26 @@ const harmonyKey = new HarmonyKey();
 function setup() {
   const canvas = createCanvas(windowWidth, windowHeight);
   canvas.parent("p5sketch_harmony");
-  a_Achord = new p5.Oscillator("sine");
-  a_Achord.freq(standardFreq);
-  e_Achord = new p5.Oscillator("sine");
-  e_Achord.freq(663);
-  c_Achord = new p5.Oscillator("sine");
-  c_Achord.freq(552.5);
-
   // 1) マイクからオーディオ入力(AudioIn)を作成し、マイクをオンにする。
   audioContext = getAudioContext();
   mic = new p5.AudioIn();
   mic.start(startPitch);
+
+  note1 = new p5.Oscillator("sine");
+  note2 = new p5.Oscillator("sine");
+  noteQuiz = new p5.Oscillator("sine");
+  choiceKey();
 }
+
+function draw() {
+  if (micFreq < 554.4 && micFreq > 552.5) {
+    fill(255);
+    ellipse(width / 2, height / 2, 200, 200);
+  }
+
+
+}
+
 
 // 2) ユーザーの画面クリックでAudioContextオブジェクトを取得し、処理をスタート
 function touchStarted() {
@@ -64,7 +77,7 @@ function getPitching() {
         select("#freq").html(frequency);
         select("#midi").html(midiNum);
         select("#cde").html(currentNote);
-        console.log(micFreq);
+        // console.log(micFreq);
       }
     } else {
     }
@@ -72,35 +85,60 @@ function getPitching() {
   });
 }
 
+const calculateDiff = function (freq1, freq2) {
+  let diff = 1200 * Math.log2(freq1 / freq2);
+  return diff < 0 ? -diff : diff;
+};
+
+function choiceKey() {
+  for(let i = 0; i < quizNum; i++) {
+        while(true){
+          let keyNum = Math.floor(Math.random() * majorKey.length);
+          if(!quizKey.includes(majorKey[keyNum])) {
+          quizKey[i] = majorKey[keyNum];
+          break;
+          }
+        }
+  }
+  console.log(quizKey);
+  createQuiz();
+}
+
 function createQuiz() {
-  let keyNum = Math.floor(Math.random() * majorKey.length);
-  harmonyKey.createHarmony(majorKey[keyNum]);
+  harmonyKey.createHarmony(quizKey[quizCount]);
+  console.log(harmonyKey.keyName);
   let equalTonic = standardFreq * Math.pow(2, (harmonyKey.tonic_midiNum - 69) / 12);
-  let equalDominant = 440 * Math.pow(2, ((harmonyKey.tonic_midiNum + 7) - 69) / 12);
-  let equalMediant = 440 * Math.pow(2, ((harmonyKey.tonic_midiNum + 4) - 69) / 12);
+  let equalDominant = standardFreq * Math.pow(2, ((harmonyKey.tonic_midiNum + 7) - 69) / 12);
+  let equalMediant = standardFreq * Math.pow(2, ((harmonyKey.tonic_midiNum + 4) - 69) / 12);
   let tonicDiff = calculateDiff(equalTonic, harmonyKey.tonic_tone);
   let dominantDiff = calculateDiff(equalDominant, harmonyKey.dominant_tone);
   let mediantDiff = calculateDiff(equalMediant, harmonyKey.mediant_tone)
   let maxDiff = Math.max(tonicDiff, dominantDiff, mediantDiff);
   if(maxDiff == tonicDiff) {
-      quizKey = harmonyKey.tonic_tone;
+    noteQuiz.freq(harmonyKey.tonic_tone);
+    note1.freq(harmonyKey.dominant_tone);
+    note2.freq(harmonyKey.midiant_tone);
+    console.log("5音", harmonyKey.dominant_tone);
+    console.log("3音", harmonyKey.midiant_tone);
   }else if(maxDiff == dominantDiff) {
-      quizKey = harmonyKey.dominant_tone;
+    noteQuiz.freq(harmonyKey.dominant_tone);
+    note1.freq(harmonyKey.tonic_tone);
+    note2.freq(harmonyKey.mediant_tone);
+    console.log("主音", harmonyKey.tonic_tone);
+    console.log("3音", harmonyKey.mediant_tone);
   }else if(maxDiff = mediantDiff) {
-      quizKey = harmonyKey.mediant_tone;
+    noteQuiz.freq(harmonyKey.mediant_tone);
+    note1.freq(harmonyKey.tonic_tone);
+    note2.freq(harmonyKey.dominant_tone);
+    console.log("主音", harmonyKey.tonic_tone);
+    console.log("5音", harmonyKey.dominant_tone);
   }
-}
-
-function draw() {
-  if (micFreq < 554.4 && micFreq > 552.5) {
-    fill(255);
-    ellipse(width / 2, height / 2, 200, 200);
-  }
+  console.log("差分", maxDiff);
 }
 
 
 function mousePressed() {
-  // a_Achord.start();
-  // e_Achord.start();
-  // e_Achord.start();
+  note1.start();
+  note2.start();
+  noteQuiz.start();
 }
