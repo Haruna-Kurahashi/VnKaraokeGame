@@ -1,9 +1,16 @@
 let a_Achord;
 let e_Achord;
 let c_Achord;
-let standardFreq = 442;
+let tonicTone;
+let dominantTone;
+let mediantTone;
+let standardFreq = 440;
 let micFreq;
-
+let quizKey;
+// const majorKey = ["C", "G", "D", "A", "E", "B", "Fsharp", "Csharp", "F", "Bflat", "Aflat", "Dflat", "Gflat", "Cflat"];
+const majorKey = ["C", "G", "D", "A", "E", "B"];
+const harmonyKey = new HarmonyKey();
+  
 function setup() {
   const canvas = createCanvas(windowWidth, windowHeight);
   canvas.parent("p5sketch_harmony");
@@ -65,6 +72,25 @@ function getPitching() {
   });
 }
 
+function createQuiz() {
+  let keyNum = Math.floor(Math.random() * majorKey.length);
+  harmonyKey.createHarmony(majorKey[keyNum]);
+  let equalTonic = standardFreq * Math.pow(2, (harmonyKey.tonic_midiNum - 69) / 12);
+  let equalDominant = 440 * Math.pow(2, ((harmonyKey.tonic_midiNum + 7) - 69) / 12);
+  let equalMediant = 440 * Math.pow(2, ((harmonyKey.tonic_midiNum + 4) - 69) / 12);
+  let tonicDiff = calculateDiff(equalTonic, harmonyKey.tonic_tone);
+  let dominantDiff = calculateDiff(equalDominant, harmonyKey.dominant_tone);
+  let mediantDiff = calculateDiff(equalMediant, harmonyKey.mediant_tone)
+  let maxDiff = Math.max(tonicDiff, dominantDiff, mediantDiff);
+  if(maxDiff == tonicDiff) {
+      quizKey = harmonyKey.tonic_tone;
+  }else if(maxDiff == dominantDiff) {
+      quizKey = harmonyKey.dominant_tone;
+  }else if(maxDiff = mediantDiff) {
+      quizKey = harmonyKey.mediant_tone;
+  }
+}
+
 function draw() {
   if (micFreq < 554.4 && micFreq > 552.5) {
     fill(255);
@@ -72,8 +98,9 @@ function draw() {
   }
 }
 
+
 function mousePressed() {
-  a_Achord.start();
-  e_Achord.start();
+  // a_Achord.start();
+  // e_Achord.start();
   // e_Achord.start();
 }
