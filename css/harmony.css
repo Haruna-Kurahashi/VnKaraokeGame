@@ -22,7 +22,6 @@
   nav {
     display: flex;
     flex-direction: row-reverse;
-    margin-bottom: 8vh;
   }
   
   .home-link {
