@@ -7,7 +7,10 @@ let key = {};
 let quizKey = [];
 let quizNum = 3;
 let quizCount = 0;
-let gameState;
+let gameState  = false;
+let timer = 3;
+let frame = 0;
+let quizState = 'before';
 
 // let note3;
 // let note4;
@@ -31,14 +34,15 @@ function setup() {
 }
 
 function draw() {
+  background('#140d36');
   if (micFreq < 554.4 && micFreq > 552.5) {
     fill(255);
     ellipse(width / 2, height / 2, 200, 200);
   }
 
+  drawQuiz();
 
 }
-
 
 // 2) ユーザーの画面クリックでAudioContextオブジェクトを取得し、処理をスタート
 function touchStarted() {
@@ -90,6 +94,11 @@ const calculateDiff = function (freq1, freq2) {
   return diff < 0 ? -diff : diff;
 };
 
+const calculateScore = function (freq1, freq2) {
+  let diff = 1200 * Math.log2(freq1 / freq2);
+  return diff;
+};
+
 function choiceKey() {
   for(let i = 0; i < quizNum; i++) {
         while(true){
@@ -136,9 +145,89 @@ function createQuiz() {
   console.log("差分", maxDiff);
 }
 
-
 function mousePressed() {
-  note1.start();
-  note2.start();
-  noteQuiz.start();
+}
+
+function keyPressed() {
+  // Enterキー
+  if (keyCode == 13) {
+    if (gameState == false) {
+      gameState = true;
+      note1.start();
+      note2.start();
+      noteQuiz.start();
+      console.log(gameState);
+    }
+    if (gameState == 'quiz1') {
+      note1.stop();
+      note2.stop();
+      noteQuiz.stop();
+      quizCount++;
+      createQuiz();
+      timer = 10;
+    }
+  }
+  if (keyCode === RIGHT_ARROW) {
+    if (quizCount >= 2) {
+      quizState == 'finish';
+    } else {
+      timer = 3;
+      gameState = true;
+      quizCount++;
+      createQuiz();
+      note1.start();
+      note2.start();
+      noteQuiz.start();
+      console.log(gameState);
+      console.log(quizCount);
+      console.log(quizState);
+    }
+    
+  }
+}
+
+function drawQuiz() {
+  if (gameState == false) {
+    if (quizState == 'before') {
+      fill("#3d3a60");
+      rect(width / 2 - 100, height - 300, 200, 70, 20);
+      textSize(32);
+      fill(255);
+      text('S T A R T', width / 2 - 80, height - 250);
+    } else if (quizState == 'finish') {
+      
+    } else if (quizState == 'doing') {
+      fill("#3d3a60");
+      rect(width / 2 - 100, height - 300, 200, 70, 20);
+      textSize(32);
+      fill(255);
+      text('N E X T', width / 2 - 60, height - 250);
+    }
+  }
+  if (gameState == true) {
+    textSize(32);
+    fill(255);
+    textAlign(CENTER);
+    text(quizKey[quizCount] + "を弾こう！", width / 2 - 50, 30);
+    fill("#3d3a60");
+    text('T I M E', 100, height / 2 + 50);
+    textSize(100);
+    text(harmonyKey.keyName, width - 150, height - 260);
+    textSize(130);
+    text(timer, 100, height - 280);
+    frame++;
+    if (frame > 60) {
+      timer--;
+      frame = 0;
+    }
+    if (timer <= 0) {
+      timer = 0;
+      gameState = false;
+      quizState = 'doing'
+      note1.stop();
+      note2.stop();
+      noteQuiz.stop();
+    }
+  }
+
 }

@@ -24,7 +24,7 @@ class HarmonyKey {
                 this.dominant_tone = this.tonic_tone * 3 / 2;
                 this.mediant_tone = this.tonic_tone * 5 / 4;
                 this.tonic_midiNum = 67;
-                this.keyName = "G ur";
+                this.keyName = "G dur";
                 break;
             case "D":
                 this.tonic_tone = 293.5;
