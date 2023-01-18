@@ -37,6 +37,8 @@ let perfectPoint = 0;
 let overlaped = [];
 let musicNum = 0;
 let timeoutId;
+const startPos = 300;
+var score = new Array();
 
 // [64, 0.75, 0],
   // [67, 0.25, 0],
@@ -76,14 +78,17 @@ let timeoutId;
 const staffHeight = 35;
 
 const melody = [
-  [60, 1, 0],
-  [62, 1, 0],
-  [64, 1, 0],
-  [65, 1, 0],
-  [67, 1, 0],
-  [69, 1, 0],
-  [71, 1, 0],
-  [72, 1, 0],
+  [64, 0.75],
+  [67, 0.25],
+  [67, 1],
+  [64, 0.75],
+  [62, 0.25],
+  [60, 1],
+  [62, 0.75],
+  [64, 0.25],
+  [67, 0.75],
+  [64, 0.25],
+  [62, 2],
 ];
 
 function preload() {
@@ -118,7 +123,20 @@ function setup() {
 function draw() {
   update();
   background("#140d36");
-
+  strokeWeight(1);
+  for (i = 0; i < 20; i++) {
+    beginShape();
+    stroke(117, 122, 216, 50);
+    vertex((startPos - score[0].noteWidth / 2) + i * 100, 80);
+    vertex((startPos - score[0].noteWidth / 2) + i * 100, height - 55);
+    endShape();
+    beginShape();
+    //stroke(117, 122, 216);
+    stroke(117, 122, 216, 80);
+    vertex((startPos - score[0].noteWidth / 2) + i * 400, 80);
+    vertex((startPos - score[0].noteWidth / 2) + i * 400, height - 55);
+    endShape();
+  }
   drawSprites();
 
   noStroke();
@@ -141,7 +159,7 @@ function draw() {
   // vertex(150, 75);
   // endShape();
   noFill();
-  stroke(255, 255, 0);
+  stroke(255, 160, 0);
   strokeWeight(4);
   if (pitchArray.length > 0) {
     for (let j = 0; j < pitchArray.length; j++) {
@@ -366,8 +384,8 @@ function createStaff() {
   //console.log("五線譜", staff[1]);
 }
 
+
 //曲
-var score = new Array();
 function createMusic() {
   //melodyToHeight();
   const toOnSprite = createSprite(100, 260, );
@@ -393,13 +411,13 @@ function createMusic() {
   }
 
   //譜面スプライト生成
-  const startPos = 300;
   musicGroup = new Group();
   for (let i = 0; i < melody.length; i++) {
     sprite = createSprite();
     sprite.width = score[i].noteWidth;
     sprite.height = staffHeight;
     sprite.position.y = staff[score[i].staffNum] + score[i].notePosY;
+
 
     if (i == 0) {
       sprite.position.x = startPos;
@@ -409,6 +427,7 @@ function createMusic() {
         lastPosX + (score[i - 1].noteWidth / 2 + score[i].noteWidth / 2);
       startPosX.push(lastPosX + score[i - 1].noteWidth / 2);
     }
+    
 
     lastPosX = sprite.position.x;
     sprite.musicFreq = score[i].freq;
@@ -480,6 +499,7 @@ function createMusic() {
   perfectPoint = 10 * melody.length;
   const b = document.getElementById("perfect");
   b.textContent = parseInt(perfectPoint);
+
 }
 
 function createTimeBar() {
