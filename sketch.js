@@ -87,7 +87,7 @@ const melody = [
 ];
 
 function preload() {
-  //toOnImage = loadImage("./imgto-on.png");
+  toOnImage = loadImage("./img/to-on2.png");
   note_Img2 = loadImage("./img/note2.svg");
   note_Img4 = loadImage("./img/note4.svg");
   note_Img8 = loadImage("./img/note8.svg");
@@ -370,8 +370,8 @@ function createStaff() {
 var score = new Array();
 function createMusic() {
   //melodyToHeight();
-  // const toOnSprite = createSprite(100, 250);
-  // toOnSprite.addImage(toOnImage);
+  const toOnSprite = createSprite(100, 260, );
+  toOnSprite.addImage(toOnImage);
   if (!melody.length) {
     return;
   }

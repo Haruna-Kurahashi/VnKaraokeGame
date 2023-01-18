@@ -13,14 +13,14 @@ class HarmonyKey {
     createHarmony(key) {
         switch (key) {
             case "C":
-                this.tonic_tone = 264;
+                this.tonic_tone = 260.74;
                 this.dominant_tone = this.tonic_tone * 3 / 2;
                 this.mediant_tone = this.tonic_tone * 5 / 4;
                 this.tonic_midiNum = 60;
                 this.keyName = "C dur";
                 break;
             case "G":
-                this.tonic_tone = 391;
+                this.tonic_tone = 391.11;
                 this.dominant_tone = this.tonic_tone * 3 / 2;
                 this.mediant_tone = this.tonic_tone * 5 / 4;
                 this.tonic_midiNum = 67;

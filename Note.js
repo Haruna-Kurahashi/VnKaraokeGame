@@ -1,6 +1,7 @@
 class Note {
   staffNum;
   notePosY;
+  keyFreq;
 
   //MIDI番号、音価、臨時記号
   constructor(midi_note, value_note, symbol_note) {
@@ -240,5 +241,16 @@ class Note {
 
   get valueNoteToWidth() {
     return this.noteWidth;
+  }
+
+  pythagorasFreq(key, midi_note) {
+    if (key == "C") {
+      keyFreq = 260.74;
+      keyMidi = 60;
+      switch (midi_note) {
+        
+      }
+    }
+    
   }
 }
