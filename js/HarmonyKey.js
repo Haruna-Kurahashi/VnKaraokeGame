@@ -8,7 +8,7 @@ class HarmonyKey {
         this.mediant_tone = this.tonic_tone * 5 / 4;
         this.tonic_midiNum = 69;
         this.keyName = "";
-        this.quizName = ";"
+        this.quizName = "";
     }
 
     createHarmony(key) {

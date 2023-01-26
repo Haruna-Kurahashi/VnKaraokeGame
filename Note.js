@@ -1,12 +1,14 @@
 class Note {
   staffNum;
   notePosY;
-  keyFreq;
 
   //MIDI番号、音価、臨時記号
   constructor(midi_note, value_note, symbol_note) {
+    //midi番号
     this.midiNote = midi_note;
+    //音価
     this.valueNote = value_note;
+    //＃，♭
     this.symbolNote = symbol_note;
     this.freq = 440;
     this.noteName = {};
@@ -245,12 +247,70 @@ class Note {
 
   pythagorasFreq(key, midi_note) {
     if (key == "C") {
-      keyFreq = 260.74;
-      keyMidi = 60;
+      this.keyFreq = 260.74;
+      this.keyMidi = 60;
       switch (midi_note) {
-        
+        case 60: //C4
+          this.freq = 260.74;
+          break;
+        case 62: //D
+          this.frea = this.keyFreq * Math.pow(2, 204 / 1200);
+          break;
+        case 64: //E
+          this.freq = this.keyFreq * Math.pow(2, 408 / 1200);
+          break;
+        case 65: //F
+          this.freq = this.keyFreq * Math.pow(2, 498 / 1200);
+          break;
+        case 67: //G
+          this.freq = this.keyFreq * Math.pow(2, 702 / 1200);
+          break;
+        case 69: //A
+          this.freq = this.keyFreq * Math.pow(2, 906 / 1200);
+          break;
+        case 71: //H
+          this.freq = this.keyFreq * Math.pow(2, 1110 / 1200);
+          break;
+        case 72: //C5
+          this.freq = this.keyFreq * Math.pow(2, 1200 / 1200);
+          break;
       }
     }
-    
+    if (key == "D") {
+      this.keyFreq = 	293.33;
+      this.keyMidi = 60;
+      switch (midi_note) {
+        case 60: //C
+        this.freq = this.keyFreq * Math.pow(2, -204 / 1200);
+        break;
+        case 61: //C#
+          this.freq = this.keyFreq * Math.pow(2, -90 / 1200);
+          break;
+        case 62: //D4
+          this.freq = 293.33;
+          break;
+        case 64: //E
+          this.freq = this.keyFreq * Math.pow(2, 204 / 1200);
+          break;
+        case 66: //F#
+          this.freq = this.keyFreq * Math.pow(2, 408 / 1200);
+          break;
+        case 67: //G
+          this.freq = this.keyFreq * Math.pow(2, 498 / 1200);
+          break;
+        case 69: //A
+          this.freq = this.keyFreq * Math.pow(2, 702 / 1200);
+          break;
+        case 71: //H
+          this.freq = this.keyFreq * Math.pow(2, 906 / 1200);
+          break;
+        case 73: //C#
+          this.freq = this.keyFreq * Math.pow(2, 1110 / 1200);
+          break;
+        case 74: //D5
+          this.freq = this.keyFreq * Math.pow(2, 1200 / 1200);
+          break;
+      }
+    }
   }
 }

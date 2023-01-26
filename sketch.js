@@ -37,7 +37,7 @@ let perfectPoint = 0;
 let overlaped = [];
 let musicNum = 0;
 let timeoutId;
-const startPos = 300;
+const startPos = 400;
 var score = new Array();
 
 // [64, 0.75, 0],
@@ -74,21 +74,28 @@ var score = new Array();
 // [81, 1, 0],
 // [81, 1, 0],
 // [70, 1, 0],
-
+// [60, 0.75],
+// [73, 0.25],
+// [67, 1],
+// [64, 0.75],
+// [62, 0.25],
+// [60, 1],
+// [62, 0.75],
+// [64, 0.25],
+// [67, 0.75],
+// [64, 0.25],
+// [62, 2],
 const staffHeight = 35;
 
 const melody = [
-  [64, 0.75],
-  [67, 0.25],
-  [67, 1],
-  [64, 0.75],
-  [62, 0.25],
-  [60, 1],
-  [62, 0.75],
-  [64, 0.25],
-  [67, 0.75],
-  [64, 0.25],
+  [60, 2],
   [62, 2],
+  [64, 2],
+  // [65, 2],
+  // [67, 2],
+  // [69, 2],
+  // [71, 2],
+  // [72, 2],
 ];
 
 function preload() {
@@ -124,6 +131,7 @@ function draw() {
   update();
   background("#140d36");
   strokeWeight(1);
+  //小節線の描画
   for (i = 0; i < 20; i++) {
     beginShape();
     stroke(117, 122, 216, 50);
@@ -174,7 +182,7 @@ function draw() {
   }
 
   if (isStarted) {
-    timeSprite.velocity.x = 120 / 50;
+    timeSprite.velocity.x = 100 / 50;
     stopPos = timeSprite.position.x;
   }
 }
@@ -262,9 +270,7 @@ function getPitching() {
           }
         }
 
-        // console.log("ピッチ配列", pitchArray);
-
-      
+        // console.log("ピッチ配列", pitchArray); 
         // console.log("重なり判定", timeSprite.overlap(musicGroup));
         // console.log("番号", musicNum);
       }
@@ -323,23 +329,23 @@ function scoring(current_Sp, overlaped_Sp) {
   console.log("基準周波数", overlaped_Sp.musicFreq);
   let diff = conversion(freq, overlaped_Sp.musicFreq);
   // console.log("差分", diff);
-  if (diff > 30 && diff < 50) {
+  if (diff > 20 && diff < 50) {
     point += 3;
   }
-  if (diff > 20 && diff < 30) {
-    // console.log("惜しい");
+  if (diff > 15 && diff < 20) {
+    console.log("惜しい");
     point += 5;
   }
-  if (diff > 10 && diff < 20) {
-    // console.log("惜しい");
+  if (diff > 10 && diff < 15) {
+    console.log("ok");
     point += 7;
   }
   if (diff > 5 && diff < 10) {
-    // console.log("だいたいOK");
+    console.log("good");
     point += 9;
   }
   if (diff < 5) {
-    // console.log("完璧");
+    console.log("完璧");
     point += 10;
   }
 
@@ -397,7 +403,8 @@ function createMusic() {
   //Noteクラスインスタンス生成
   for (let i = 0; i < melody.length; i++) {
     const note = new Note(melody[i][0], melody[i][1], melody[i][2]);
-    note.frequency = melody[i][0];
+    // note.frequency = melody[i][0];
+    note.pythagorasFreq("C", melody[i][0]);
     note.name = melody[i][0];
     note.defNoteY = melody[i][0];
     note.valueNoteToWidth = melody[i][1];
@@ -407,7 +414,7 @@ function createMusic() {
       note.symbolNote = 0;
     }
     score.push(note);
-    // console.log(score);
+    console.log(score);
   }
 
   //譜面スプライト生成

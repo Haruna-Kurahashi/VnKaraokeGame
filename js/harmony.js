@@ -11,7 +11,7 @@ let quizKey = [];
 let quizNum = 3;
 let quizCount = 0;
 let gameState  = false;
-let timer = 10;
+let timer = 20;
 let frame = 0;
 let quizState = 'before';
 let tonicDiff;
@@ -26,10 +26,11 @@ let adjustValue = 3;
 // let note3;
 // let note4;
 // let note5;
-// const majorKey = ["C", "G", "D", "A", "E", "B", "Fsharp", "Csharp", "F", "Bflat", "Aflat", "Dflat", "Gflat", "Cflat"];
-const majorKey = ["C", "G", "D", "A", "E", "B"];
+// const majorKey = ["C", "G", "D", "A", "E", "H", "Fsharp", "Csharp", "F", "B", "Aflat", "Dflat", "Gflat", "Cflat"];
+const majorKey = ["C", "G", "D", "A", "E", "H"];
 const harmonyKey = new HarmonyKey();
   
+let c1, c2;
 function setup() {
   const canvas = createCanvas(windowWidth, windowHeight);
   canvas.parent("p5sketch_harmony");
@@ -42,16 +43,14 @@ function setup() {
   note2 = new p5.Oscillator("sine");
   noteQuiz = new p5.Oscillator("sine");
   choiceKey();
+  
 }
 
+var vx = 0;
 function draw() {
   background('#140d36');
-  // if (micFreq < 554.4 && micFreq > 552.5) {
-  //   fill(255);
-  //   ellipse(width / 2, height / 2, 200, 200);
-  // }
-
-  drawQuiz();
+  fill(0, 20);
+  
 
   if (gameState == true) {
     if (maxDiff == mediantDiff) {
@@ -211,7 +210,7 @@ function keyPressed() {
     if (quizCount >= quizNum - 1) {
       quizState == 'finish';
     } else {
-      timer = 10;
+      timer = 20;
       gameState = true;
       quizCount++;
       createQuiz();
@@ -230,9 +229,10 @@ function drawQuiz() {
   if (gameState == false) {
     if (quizState == 'before') {
       fill("#3d3a60");
-      rect(width / 2 - 100, height - 300, 200, 70, 20);
-      textSize(32);
+      rect(width / 2 - 110, height - 300, 220, 70, 20);
+      textSize(30);
       fill(255);
+      textFont('Mochiy Pop One');
       text('S T A R T', width / 2 - 80, height - 250);
     } else if (quizState == 'finish') {
       
@@ -241,20 +241,25 @@ function drawQuiz() {
       rect(width / 2 - 100, height - 300, 200, 70, 20);
       textSize(32);
       fill(255);
-      text('N E X T', width / 2 - 60, height - 250);
+      textFont('Mochiy Pop One');
+      text('N E X T', width / 2 - 70, height - 250);
     }
   }
   if (gameState == true) {
-    textSize(32);
+    textSize(42);
     fill(255);
     textAlign(CENTER);
-    text(harmonyKey.quizName + "を弾こう！", width / 2 - 50, 30);
+    textFont('Mochiy Pop One');
+    text(harmonyKey.quizName + "を弾こう！", width / 2 - 50, 50);
     fill("#3d3a60");
-    text('T I M E', 100, height / 2 + 50);
-    textSize(100);
-    text(harmonyKey.keyName, width - 150, height - 260);
+    textFont('Oswald');
+    textSize(32
+    );
+    text('T I M E', 100, height / 2 + 180);
+    textSize(120);
+    text(harmonyKey.keyName, width - 150, height - 130);
     textSize(130);
-    text(timer, 100, height - 280);
+    text(timer, 100, height - 140);
     frame++;
       
       
