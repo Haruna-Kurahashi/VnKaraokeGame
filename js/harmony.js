@@ -48,9 +48,8 @@ function setup() {
 
 var vx = 0;
 function draw() {
-  background('#140d36');
-  fill(0, 20);
-  
+  background('#140d36');  
+  drawQuiz();
 
   if (gameState == true) {
     if (maxDiff == mediantDiff) {

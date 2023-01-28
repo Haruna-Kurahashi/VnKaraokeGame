@@ -53,7 +53,7 @@ class HarmonyKey {
                 this.keyName = "E dur";
                 this.quizName = "G#"
                 break;
-            case "B":
+            case "H":
                 this.tonic_tone = 247.5;
                 this.dominant_tone = this.tonic_tone * 3 / 2;
                 this.mediant_tone = this.tonic_tone * 5 / 4;
