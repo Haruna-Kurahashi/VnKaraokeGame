@@ -33,8 +33,10 @@ let count = 0;
 let rankCount = 0;
 let rankCount2 = 0;
 
+//画像関連
 let rankTextGood, rankTextGreat, rankTextExc;
 let rankImgGood, rankImgGreat, rankImgExc;
+let highArrow, lowArrow;
 
 // let note3;
 // let note4;
@@ -45,12 +47,14 @@ const harmonyKey = new HarmonyKey();
 
 
 function preload() {
-  rankTextGood = loadImage("../img/good.png");
-  rankTextGreat = loadImage("../img/great.png");
-  rankTextExc = loadImage("../img/excellent.png");
-  rankImgGood = loadImage("../img/bronze.png");
-  rankImgGreat = loadImage("../img/silver.png");
-  rankImgExc = loadImage("../img/gold.png");
+  rankTextGood = loadImage("../img/good.svg");
+  rankTextGreat = loadImage("../img/great.svg");
+  rankTextExc = loadImage("../img/excellent.svg");
+  rankImgGood = loadImage("../img/bronze.svg");
+  rankImgGreat = loadImage("../img/silver.svg");
+  rankImgExc = loadImage("../img/gold.svg");
+  highArrow = loadImage("../img/raisepitch.svg");
+  lowArrow = loadImage("../img/lowerpitch.svg");
 }
 
 let c1, c2;
@@ -107,25 +111,24 @@ function draw() {
   background('#140d36');
   drawQuiz();
 
-
   // for (let i = 0; i < micVisuals.length; i++) {
   //   micVisuals[i].draw();
-  //   micVisuals[i].setColor(color(193, 253, 166, 50), color(0, 146, 69));
+  //   micVisuals[i].setColor(color(230, 63, 5, 60), color(0, 146, 69));
   //   // micVisuals[i].setColor(color(0, 0, 255, 100), color(0, 0, 255));
   //   micVisuals[i].setBlur(0);
   // }
   // for (let i = 0; i < harmonyVisualsL.length; i++) {
   //   harmonyVisualsL[i].draw();
   //   harmonyVisualsR[i].draw();
-  //   // harmonyVisualsL[i].setColor(color(193, 253, 166, 50), color(0, 146, 69));
-  //   // harmonyVisualsR[i].setColor(color(193, 253, 166, 50), color(0, 146, 69));
+  //   harmonyVisualsL[i].setColor(color(232, 157, 37, 60), color(230, 63, 5));
+  //   harmonyVisualsR[i].setColor(color(232, 157, 37, 60), color(230, 63, 5));
   // }
-  for (let i = 0; i < animations.length; i++) {
-    animations[i].draw();
-  }
-  for (let i = 0; i < animations2.length; i++) {
-    animations2[i].draw();
-  }
+  // for (let i = 0; i < animations.length; i++) {
+  //   animations[i].draw();
+  // }
+  // for (let i = 0; i < animations2.length; i++) {
+  //   animations2[i].draw();
+  // }
 
   // push();
   // translate(width /2, height/2 - 100);
@@ -140,8 +143,6 @@ function draw() {
   // pop();
 
   drawMicVisual();
-  
-
 }
 
 // 2) ユーザーの画面クリックでAudioContextオブジェクトを取得し、処理をスタート
@@ -337,6 +338,8 @@ function drawQuiz() {
     for (let i = 0; i < harmonyVisualsL.length; i++) {
       harmonyVisualsL[i].draw();
       harmonyVisualsR[i].draw();
+      harmonyVisualsL[i].setColor(color(232, 157, 37, 60), color(230, 63, 5));
+      harmonyVisualsR[i].setColor(color(232, 157, 37, 60), color(230, 63, 5));
     }
       
     if (frame > 60) {
@@ -396,7 +399,9 @@ function drawMicVisual() {
           if (rankCount <= 120) {
             rankCount++
           } else if (rankCount >= 120) {
-            finalRank = "Great!";
+            if (finalRank != "Exellent!") {
+              finalRank = "Great!";
+            }
           }
         } else if (micDiff > maxDiff) {
           console.log("惜しい");
@@ -412,7 +417,14 @@ function drawMicVisual() {
           square(0, 0, 220, 2);
           square(0, 0, 200), 2;
           pop();
-          finalRank = "Good!";
+          if (micFreq > equalMediant) {
+            image(lowArrow, 80, 90);
+          } else if (micFreq < harmonyKey.mediant_tone) {
+            image(highArrow, 80, 90);
+          }
+          if (finalRank != "Exellent!" && finalRank != "silver") {
+            finalRank = "Good!";
+          }
         }
       }
     }

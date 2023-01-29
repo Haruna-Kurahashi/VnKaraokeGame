@@ -35,7 +35,7 @@ class HarmonyKey {
                 this.mediant_tone = this.tonic_tone * 5 / 4;
                 this.tonic_midiNum = 62;
                 this.keyName = "D dur";
-                this.quizName = "F#"
+                this.quizName = "Fis"
                 break;
             case "A":
                 this.tonic_tone = 440;
@@ -43,7 +43,7 @@ class HarmonyKey {
                 this.mediant_tone = this.tonic_tone * 5 / 4;
                 this.tonic_midiNum = 69;
                 this.keyName = "A dur";
-                this.quizName = "C#"
+                this.quizName = "Cis"
                 break;
             case "E":
                 this.tonic_tone = 660;
@@ -51,7 +51,7 @@ class HarmonyKey {
                 this.mediant_tone = this.tonic_tone * 5 / 4;
                 this.tonic_midiNum = 76;
                 this.keyName = "E dur";
-                this.quizName = "G#"
+                this.quizName = "Gis"
                 break;
             case "B":
                 this.tonic_tone = 247.5;
@@ -59,7 +59,7 @@ class HarmonyKey {
                 this.mediant_tone = this.tonic_tone * 5 / 4;
                 this.tonic_midiNum = 59;
                 this.keyName = "B dur";
-                this.quizName = "D#"
+                this.quizName = "Dis"
                 break;
         }
     }
