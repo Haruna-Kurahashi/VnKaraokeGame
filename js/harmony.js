@@ -109,6 +109,7 @@ var vx = 0;
 function draw() {
   blendMode(BLEND);
   background('#140d36');
+
   drawQuiz();
 
   // for (let i = 0; i < micVisuals.length; i++) {
