@@ -6,7 +6,6 @@ let note2;
 let noteQuiz;
 let standardFreq = 440;
 let micFreq;
-let key = {};
 let quizKey = [];
 let quizNum = 3;
 let quizCount = 0;
@@ -29,6 +28,13 @@ let animations = [];
 let animations2 = [];
 let colors = [];
 let shadows = [];
+let finalRank = "";
+let count = 0;
+let rankCount = 0;
+let rankCount2 = 0;
+
+let rankTextGood, rankTextGreat, rankTextExc;
+let rankImgGood, rankImgGreat, rankImgExc;
 
 // let note3;
 // let note4;
@@ -36,6 +42,16 @@ let shadows = [];
 // const majorKey = ["C", "G", "D", "A", "E", "H", "Fsharp", "Csharp", "F", "B", "Aflat", "Dflat", "Gflat", "Cflat"];
 const majorKey = ["C", "G", "D", "A", "E", "H"];
 const harmonyKey = new HarmonyKey();
+
+
+function preload() {
+  rankTextGood = loadImage("../img/good.png");
+  rankTextGreat = loadImage("../img/great.png");
+  rankTextExc = loadImage("../img/excellent.png");
+  rankImgGood = loadImage("../img/bronze.png");
+  rankImgGreat = loadImage("../img/silver.png");
+  rankImgExc = loadImage("../img/gold.png");
+}
 
 let c1, c2;
 function setup() {
@@ -51,6 +67,7 @@ function setup() {
   noteQuiz = new p5.Oscillator("sine");
   choiceKey();
   rectMode(CENTER);
+  imageMode(CENTER);
 
   colors = [color(0, 80, 100, 80),
             color(193, 253, 166, 50)];
@@ -78,43 +95,39 @@ function setup() {
       micVisuals.push(new VisualHarmony(width /2, height/2 - 100, d2));
     }
   }
-  for (let i = 0; i < 3; i++) {
-    animations2.push(new AnimationSmallRects());
-  }
+  // for (let i = 0; i < 3; i++) {
+  //   animations2.push(new AnimationSmallRects());
+  // }
 }
 
-var count = 0;
+
 var vx = 0;
 function draw() {
   blendMode(BLEND);
   background('#140d36');
   drawQuiz();
 
-  // push();
-  // translate(width / 2, height / 2 - 100);
-  // rotate(radians(45));
-  // stroke(255);
-  // noFill();
-  // strokeWeight(4);
-  // square(0, 0, 400);
-  // pop();
-  for (let i = 0; i < micVisuals.length; i++) {
-    micVisuals[i].draw();
-    micVisuals[i].setColor(color(193, 253, 166, 50), color(0, 146, 69));
-    // micVisuals[i].setColor(color(0, 0, 255, 100), color(0, 0, 255));
-    micVisuals[i].setBlur(0);
-  }
-  for (let i = 0; i < harmonyVisualsL.length; i++) {
-    harmonyVisualsL[i].draw();
-    harmonyVisualsR[i].draw();
-    harmonyVisualsL[i].setColor(color(193, 253, 166, 50), color(0, 146, 69));
-    harmonyVisualsR[i].setColor(color(193, 253, 166, 50), color(0, 146, 69));
-  }
+
+  // for (let i = 0; i < micVisuals.length; i++) {
+  //   micVisuals[i].draw();
+  //   micVisuals[i].setColor(color(193, 253, 166, 50), color(0, 146, 69));
+  //   // micVisuals[i].setColor(color(0, 0, 255, 100), color(0, 0, 255));
+  //   micVisuals[i].setBlur(0);
+  // }
+  // for (let i = 0; i < harmonyVisualsL.length; i++) {
+  //   harmonyVisualsL[i].draw();
+  //   harmonyVisualsR[i].draw();
+  //   // harmonyVisualsL[i].setColor(color(193, 253, 166, 50), color(0, 146, 69));
+  //   // harmonyVisualsR[i].setColor(color(193, 253, 166, 50), color(0, 146, 69));
+  // }
   for (let i = 0; i < animations.length; i++) {
     animations[i].draw();
   }
-  push();
+  for (let i = 0; i < animations2.length; i++) {
+    animations2[i].draw();
+  }
 
+  // push();
   // translate(width /2, height/2 - 100);
   // rotate(radians(45));
   // noFill();
@@ -127,6 +140,7 @@ function draw() {
   // pop();
 
   drawMicVisual();
+  
 
 }
 
@@ -168,7 +182,6 @@ function getPitching() {
         select("#midi").html(midiNum);
         select("#cde").html(currentNote);
         // console.log(micFreq);
-        fill(255);
       }
     } else {
     }
@@ -253,6 +266,8 @@ function keyPressed() {
       quizCount++;
       createQuiz();
       timer = 5;
+      drawCount = 0;
+      drawCount2 = 0;
     }
   }
   if (keyCode === RIGHT_ARROW && gameState == false) {
@@ -290,7 +305,18 @@ function drawQuiz() {
       textSize(32);
       fill(255);
       textFont('Mochiy Pop One');
-      text('N E X T', width / 2 - 80, height - 190);
+      text('N E X T', width / 2 - 70, height - 190);
+      const imgWidth = 200;
+      if (finalRank == "Excellent!") {
+        image(rankTextExc, width / 2, height / 4, rankTextExc.width * 0.8, rankTextExc.height * 0.8);
+        image(rankImgExc, width / 2, height / 2 + 25, imgWidth, rankImgExc.height * (imgWidth / rankImgExc.width));
+      } else if (finalRank == "Great!") {
+        image(rankTextGreat, width / 2, height / 4, rankTextGreat.width * 0.8, rankTextGreat.height * 0.8);
+        image(rankImgGreat, width / 2, height / 2 + 25, imgWidth, rankImgGreat.height * (imgWidth / rankImgGreat.width));
+      } else if (finalRank == "Good!") {
+        image(rankTextGood, width / 2, height / 4, rankTextGood.width * 0.8, rankTextGood.height * 0.8);
+        image(rankImgGood, width / 2, height / 2 + 25, imgWidth, rankImgGood.height * (imgWidth / rankImgGood.width));
+      }
     }
   }
   if (gameState == true) {
@@ -308,9 +334,10 @@ function drawQuiz() {
     text(harmonyKey.keyName, width - 150, height - 130);
     textSize(130);
     text(timer, 100, height - 140);
-    // for (let i = 0; i < harmonyVisuals.length; i++) {
-    //   harmonyVisuals[i].draw();
-    // }
+    for (let i = 0; i < harmonyVisualsL.length; i++) {
+      harmonyVisualsL[i].draw();
+      harmonyVisualsR[i].draw();
+    }
       
     if (frame > 60) {
       timer--;
@@ -335,7 +362,7 @@ function drawMicVisual() {
       console.log("純正律", harmonyKey.mediant_tone);
       console.log("マイク", micFreq);
       let micDiff = calculateDiff(micFreq, harmonyKey.mediant_tone);
-      console.log("micDiff", mediantDiff);
+      // console.log("midDiff", mediantDiff);
       console.log("マイク差分", micDiff);
       if (midiantDiff > 0) {
         if (micDiff < 2.75) {
@@ -350,17 +377,26 @@ function drawMicVisual() {
             animations2.push(new AnimationSmallRects());
             animations2.push(new AnimationSmallRects());
             count = 0;
+            if (rankCount2 < 2) {
+              rankCount2++;
+            }
+          }
+          if (rankCount2 >= 2) {
+            finalRank = "Excellent!"
           }
           console.log("パーフェクト");
           // fill(0, 0, 255);
           // ellipse(width / 2, height / 2, 500, 500);
         } else if (micDiff < maxDiff) {
           console.log("Good");
-          // fill(255, 255, 0);
-          // ellipse(width / 2, height / 2, 300, 300);
           for (let i = 0; i < micVisuals.length; i++) {
             micVisuals[i].draw();
             micVisuals[i].setBlur(0);
+          }
+          if (rankCount <= 120) {
+            rankCount++
+          } else if (rankCount >= 120) {
+            finalRank = "Great!";
           }
         } else if (micDiff > maxDiff) {
           console.log("惜しい");
@@ -376,9 +412,23 @@ function drawMicVisual() {
           square(0, 0, 220, 2);
           square(0, 0, 200), 2;
           pop();
-  
+          finalRank = "Good!";
         }
       }
     }
+  }
+}
+
+function drawRank() {
+  const imgWidth = 200;
+  if (finalRank == "Excellent!") {
+    image(rankTextExc, width / 2, height / 4, rankTextExc.width * 0.8, rankTextExc.height * 0.8);
+    image(rankImgExc, width / 2, height / 2 + 25, imgWidth, rankImgExc.height * (imgWidth / rankImgExc.width));
+  } else if (finalRank == "Great!") {
+    image(rankTextGreat, width / 2, height / 4, rankTextGreat.width * 0.8, rankTextGreat.height * 0.8);
+    image(rankImgGreat, width / 2, height / 2 + 25, imgWidth, rankImgGreat.height * (imgWidth / rankImgGreat.width));
+  } else if (finalRank == "Good!") {
+    image(rankTextGood, width / 2, height / 4, rankTextGood.width * 0.8, rankTextGood.height * 0.8);
+    image(rankImgGood, width / 2, height / 2 + 25, imgWidth, rankImgGood.height * (imgWidth / rankImgGood.width));
   }
 }
