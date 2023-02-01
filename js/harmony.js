@@ -10,7 +10,7 @@ let quizKey = [];
 let quizNum = 3;
 let quizCount = 0;
 let gameState = false;
-let timer = 2;
+let timer = 20;
 let frame = 0;
 let quizState = "before";
 let tonicDiff;
@@ -126,7 +126,7 @@ function draw() {
   // square(0, 0, 200), 2;
   // pop();
 
-  drawMicVisual();
+
 }
 
 // 2) ユーザーの画面クリックでAudioContextオブジェクトを取得し、処理をスタート
@@ -168,6 +168,7 @@ function getPitching() {
         select("#cde").html(currentNote);
         // console.log(micFreq);
       }
+      drawMicVisual();
     } else {
     }
     getPitching();
@@ -199,6 +200,7 @@ function choiceKey() {
 }
 
 function createQuiz() {
+  console.log(quizKey[quizCount]);
   harmonyKey.createHarmony(quizKey[quizCount]);
   console.log(harmonyKey.keyName);
   equalTonic = standardFreq * Math.pow(2, (harmonyKey.tonic_midiNum - 69) / 12);
@@ -236,7 +238,7 @@ function createQuiz() {
 
 function createVisual() {
   const blue = {
-    mainColor: color(0, 80, 100, 80),
+    mainColor: color(0, 0, 225, 80),
     subColor: color(0, 80, 100, 80),
     mainShadow: color(0, 0, 255),
     subShadow: color(0, 0, 255),
@@ -261,13 +263,14 @@ function createVisual() {
 
   const pink = {
     mainColor: color(219, 110, 161, 60),
-    subColor: color(232, 165, 196, 60),
+    // subColor: color(232, 165, 196, 60),
+    subColor: color(255, 0, 0, 60),
     mainShadow: color(255, 0, 0),
     subShadow: color(255, 0, 0),
     lineColor: color(201, 8, 56),
   };
 
-  harmonyColors = [blue, lightGreen, orange];
+  harmonyColors = [blue, pink, orange];
   for (let i = 0; i < quizNum; i++) {
     while (true) {
       let num = Math.floor(Math.random() * harmonyColors.length);
@@ -286,7 +289,7 @@ function createVisual() {
       harmonyVisualsR.push(
         new VisualHarmony(width - width / 4 - 50, height / 2 - 100, 360)
       );
-      micVisualsE.push(new VisualHarmony(width / 2, height / 2 - 100, 300));
+      micVisualsE.push(new VisualHarmony(width / 2, height / 2 - 100, 360));
     } else {
       let d = random(50, 360);
       harmonyVisualsL.push(
@@ -315,10 +318,7 @@ function keyPressed() {
       gameState = true;
       note1.start();
       note2.start();
-      // noteQuiz.start();
-      console.log(gameState);
     }
-    // badges.push({ badge: finalRank, key: quizKey[quizCount] });
     if (quizState == "finish") {
       console.log("送るもの", badges);
       db.badges.bulkPut(
@@ -328,16 +328,17 @@ function keyPressed() {
         console.log(error);
       });
       gameState = false;
+      quizCount = 0;
       location.href = "badgeCollection.html";
     }
   }
   if (keyCode === RIGHT_ARROW && gameState == false) {
-    timer = 2;
     gameState = true;
     quizCount++;
+    createQuiz();
     finalRank.rank = "unbadged";
     finalRank.num = 0;
-    createQuiz();
+    timer = 20;
     note1.start();
     note2.start();
     // noteQuiz.start();
@@ -494,6 +495,7 @@ function drawQuiz() {
         harmonyColors[quizCount].mainShadow
       );
     }
+    // console.log("問題数",quizCount);
 
     if (frame > 60) {
       timer--;
@@ -506,7 +508,7 @@ function drawQuiz() {
       note2.stop();
       // noteQuiz.stop();
       badges.push({ badge: finalRank.rank, num: finalRank.num, key: quizKey[quizCount]});
-      if (quizCount >= quizNum - 1) {
+      if (quizCount == quizNum - 1) {
         quizState = "finish";
         for (let i = 0; i < badges.length; i++) {
           db.badges.where("key")
@@ -525,9 +527,8 @@ function drawQuiz() {
       } else {
         quizState = "doing";
       }
-      console.log(badges);
-      console.log("問題数",quizCount);
-      console.log(quizState);
+      // console.log(badges);
+      // console.log(quizState);
     }
   }
 }
@@ -536,41 +537,42 @@ function drawMicVisual() {
   if (gameState == true) {
     if (maxDiff == mediantDiff) {
       let midiantDiff = calculateScore(equalMediant, harmonyKey.mediant_tone);
-      console.log("平均律", equalMediant);
-      console.log("純正律", harmonyKey.mediant_tone);
-      console.log("マイク", micFreq);
+      // console.log("平均律", equalMediant);
+      // console.log("純正律", harmonyKey.mediant_tone);
+      // console.log("マイク", micFreq);
       let micDiff = calculateDiff(micFreq, harmonyKey.mediant_tone);
       // console.log("midDiff", mediantDiff);
-      console.log("マイク差分", micDiff);
+      // console.log("マイク差分", micDiff);
       if (midiantDiff > 0) {
         if (micDiff < 2.75) {
           for (let i = 0; i < micVisualsE.length; i++) {
             micVisualsE[i].draw();
-            micVisualsG[i].setColor(harmonyColors[quizCount].mainColor);
+            micVisualsE[i].setColor(harmonyColors[quizCount].mainColor, harmonyColors[quizCount].mainShadow);
           }
           count++;
-          if (count > 60) {
+          if (count > 120) {
             animations.push(new AnimationRectangle());
             animations2.push(new AnimationSmallRects());
             animations2.push(new AnimationSmallRects());
             animations2.push(new AnimationSmallRects());
             count = 0;
-            if (rankCount2 < 2) {
-              rankCount2++;
-            }
+            // if (rankCount2 < 2) {
+            //   rankCount2++;
+            // }
+            // if (rankCount2 >= 2) {
+              finalRank.rank = "Excellent!";
+              finalRank.num = 3;
+            // }
           }
-          if (rankCount2 >= 2) {
-            finalRank.rank = "Excellent!";
-            finalRank.num = 3;
-          }
-          console.log("Excellent!");
+      
+          // console.log("Excellent!");
           // fill(0, 0, 255);
           // ellipse(width / 2, height / 2, 500, 500);
         } else if (micDiff < maxDiff) {
           console.log("Great");
           for (let i = 0; i < micVisualsG.length; i++) {
             micVisualsG[i].draw();
-            micVisualsG[i].setColor(harmonyColors[quizCount].mainColor);
+            micVisualsG[i].setColor(harmonyColors[quizCount].subColor);
             micVisualsG[i].setBlur(0);
           }
           if (rankCount <= 120) {
@@ -582,7 +584,7 @@ function drawMicVisual() {
             }
           }
         } else if (micDiff > maxDiff) {
-          console.log("good");
+          // console.log("good");
           push();
           blendMode(SCREEN);
           translate(width / 2, height / 2 - 100);

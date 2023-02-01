@@ -3,8 +3,8 @@ class VisualHarmony {
     this.posX = _x;
     this.posY = _y;
     this.diameter = _d;
-    this.blur = 80;
-    this.color = color(0, 80, 100, 80);
+    // this.blur = 30;
+    this.color = color(0, 0, 255, 80);
     this.shadowColor = color(0,0, 255);
   }
   draw() {
@@ -120,4 +120,3 @@ class AnimationSmallRects {
     this.position.add(this.velocity);
   }
 }
-
