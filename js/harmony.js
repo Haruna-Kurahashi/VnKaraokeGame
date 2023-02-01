@@ -10,7 +10,7 @@ let quizKey = [];
 let quizNum = 3;
 let quizCount = 0;
 let gameState = false;
-let timer = 20;
+let timer = 2;
 let frame = 0;
 let quizState = "before";
 let tonicDiff;
@@ -50,7 +50,7 @@ db.version(1).stores({
 // let note3;
 // let note4;
 // let note5;
-// const majorKey = ["C", "G", "D", "A", "E", "H", "Fsharp", "Csharp", "F", "B", "Aflat", "Dflat", "Gflat", "Cflat"];
+// const majorKey = ["C", "G", "D", "A", "E", "H", "Fis", "Cis", "F", "B", "Es", "As", "Des", "Ges", "Ces"];
 const majorKey = ["C", "G", "D", "A", "E", "H"];
 const harmonyKey = new HarmonyKey();
 
@@ -327,6 +327,7 @@ function keyPressed() {
       .catch((error)=>{
         console.log(error);
       });
+      gameState = false;
       location.href = "badgeCollection.html";
     }
   }
@@ -411,14 +412,14 @@ function drawQuiz() {
       }
     } else if (quizState == "finish") {
       const imgWidth = 200;
+      fill("#3d3a60");
+      rect(width / 2, height - 200, 250, 70, 20);
+      textSize(32);
+      fill(255);
+      textFont("Mochiy Pop One");
+      textAlign(CENTER);
+      text("バッジを見る", width / 2, height - 190);
       if (finalRank.rank == "Excellent!") {
-        fill("#3d3a60");
-        rect(width / 2, height - 200, 250, 70, 20);
-        textSize(32);
-        fill(255);
-        textFont("Mochiy Pop One");
-        textAlign(CENTER);
-        text("バッジを見る", width / 2, height - 190);
         image(
           rankTextExc,
           width / 2,

@@ -46,3 +46,44 @@
     fill: #d7d9ff;
   }
   
+  .badges {
+    width: 80%;
+    margin: auto;
+  }
+
+  h1 {
+    color: #fff;
+    font-size: 0.35rem;
+    letter-spacing: 4px;
+    display: inline-block;
+    background-color: #3d3a60;
+    padding: 0.15rem 0.4rem;
+    text-align: center;
+    border-radius: 0.16rem;
+    margin-top: 1rem;
+  }
+
+  .badge-container {
+    margin: auto;
+    margin-top: 1rem;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+  }
+
+  .badge {
+    padding: 0.3rem;
+    margin-bottom: 0.8rem;
+  }
+
+  .badge-name {
+    color: #fff;
+    font-size: 0.48rem;
+    text-align: center;
+  }
+
+  .badge-img {
+    padding-top: 0.3rem;
+    width: 1.8rem;
+  }
+
